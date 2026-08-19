@@ -47,6 +47,23 @@ if (!dir.exists(projectfolder)) {
 setwd(projectfolder)
 
 #-------------------------------#
+# Directory layout
+#-------------------------------#
+# Mirrors the globals in code/_paths.do. If you change the layout there,
+# change it here too -- these are the only path definitions in this script.
+path_raw          <- file.path(projectfolder, "data", "raw")
+path_raw_QdPren   <- file.path(path_raw, "QdP-renamed")
+path_raw_INE      <- file.path(path_raw, "INE")
+path_clean_panel  <- file.path(projectfolder, "data", "clean", "panel")
+path_out_log      <- file.path(projectfolder, "data", "out", "log")
+path_out_log_ind  <- file.path(path_out_log, "ind_composition")
+
+dir.create(path_clean_panel,                       showWarnings = FALSE, recursive = TRUE)
+dir.create(file.path(path_clean_panel, "allfirms"), showWarnings = FALSE, recursive = TRUE)
+dir.create(path_out_log,                           showWarnings = FALSE, recursive = TRUE)
+dir.create(path_out_log_ind,                       showWarnings = FALSE, recursive = TRUE)
+
+#-------------------------------#
 # Helper functions
 #-------------------------------#
 
@@ -78,8 +95,7 @@ save_ind_composition <- function(dt, stage_label, year) {
   comp[, pct := round(100 * N / sum(N), 2)]
   comp[, stage := stage_label]
   comp[, year := year]
-  dir.create("data/out/log/ind_composition", showWarnings = FALSE, recursive = TRUE)
-  fwrite(comp, paste0("data/out/log/ind_composition/", stage_label, "_", year, ".csv"))
+  fwrite(comp, file.path(path_out_log_ind, paste0(stage_label, "_", year, ".csv")))
 }
 
 # helper: safely turn a vector into year integers
@@ -138,7 +154,7 @@ make_log_totals <- function(log_dt) {
 
 prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE) {
 
-  file_name <- paste0("data/raw/QdP-renamed/workers_renamed_occlabel", year, ".dta")
+  file_name <- file.path(path_raw_QdPren, paste0("workers_renamed_occlabel", year, ".dta"))
   dt <- as.data.table(read_dta(file_name))
 
   obs_before_total <- dt[,.N]
@@ -163,7 +179,7 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
   if (log_zero_hours && obs_zero_hours > 0) {
     firm_size_full <- dt[, .(full_size = .N), by = fnumber_FIC]
     dt_zero_hours  <- dt[reg_hours_month == 0, .(fnumber_FIC)]
-    firm_file      <- paste0("data/raw/QdP-renamed/firms_renamed", year, ".dta")
+    firm_file      <- file.path(path_raw_QdPren, paste0("firms_renamed", year, ".dta"))
     firms_ind      <- as.data.table(read_dta(firm_file))[, .(fnumber_FIC, fEAC_1let_rev3)]
     dt_zero_hours  <- merge(dt_zero_hours, firm_size_full, by = "fnumber_FIC", all.x = TRUE)
     dt_zero_hours  <- merge(dt_zero_hours, firms_ind,     by = "fnumber_FIC", all.x = TRUE)
@@ -172,8 +188,7 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
                                     labels = c("1-9", "10-49", "50-249", "250+"))]
     summary_zero_hours <- dt_zero_hours[, .N, by = .(fEAC_1let_rev3, size_bin)]
     summary_zero_hours <- dcast(summary_zero_hours, fEAC_1let_rev3 ~ size_bin, value.var = "N", fill = 0)
-    dir.create("data/out/log", showWarnings = FALSE, recursive = TRUE)
-    fwrite(summary_zero_hours, paste0("data/out/log/zero_hours_firms_", year, ".csv"))
+    fwrite(summary_zero_hours, file.path(path_out_log, paste0("zero_hours_firms_", year, ".csv")))
   }
 
   # Remove zero regular hours
@@ -240,7 +255,7 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
   dt[, full_time := 2 - reg_dur]
 
   # Import firm info
-  file_name <- paste0("data/raw/QdP-renamed/firms_renamed", year, ".dta")
+  file_name <- file.path(path_raw_QdPren, paste0("firms_renamed", year, ".dta"))
   firms <- as.data.table(read_dta(file_name))
   firms <- firms[, c('year', 'fnumber_FIC', "fEAC_1let_rev3", "fEAC_34dig_rev3",
                      "fbirth_year", "fsales", "fNUTS2")]
@@ -430,7 +445,7 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
 # Load CPI data once
 #-------------------------------#
 
-cpi_table <- read_excel('data/raw/INE/PriceIndex.xls')
+cpi_table <- read_excel(file.path(path_raw_INE, "PriceIndex.xls"))
 names(cpi_table) <- c('year', 'cpi')
 
 #============================================================
@@ -452,7 +467,7 @@ for (year in 2018:2010) {
 
 # Aggregate zero-hours characterization across years (generated only in Pass 1)
 all_zero  <- rbindlist(lapply(2010:2019, function(y) {
-  f <- paste0("data/out/log/zero_hours_firms_", y, ".csv")
+  f <- file.path(path_out_log, paste0("zero_hours_firms_", y, ".csv"))
   if (file.exists(f)) fread(f) else NULL
 }))
 size_cols <- c("1-9", "10-49", "50-249", "250+")
@@ -461,7 +476,7 @@ all_zero[, Total := rowSums(.SD, na.rm = TRUE), .SDcols = size_cols]
 col_totals <- c("Total", as.list(colSums(all_zero[, c(size_cols, "Total"), with = FALSE], na.rm = TRUE)))
 names(col_totals) <- names(all_zero)
 all_zero <- rbind(all_zero, col_totals)
-fwrite(all_zero, "data/out/log/zero_hours_firms_all_years.csv")
+fwrite(all_zero, file.path(path_out_log, "zero_hours_firms_all_years.csv"))
 
 # Winsorize wages 1-99%
 percentiles <- quantile(dt_10$lreal_hrl_wage, probs = c(0.01, 0.99), na.rm = TRUE)
@@ -469,20 +484,19 @@ dt_10[lreal_hrl_wage < percentiles[1], lreal_hrl_wage := percentiles[1]]
 dt_10[lreal_hrl_wage > percentiles[2], lreal_hrl_wage := percentiles[2]]
 
 # Save main dataset (create the output folder if it does not exist)
-dir.create("data/clean/panel", showWarnings = FALSE, recursive = TRUE)
-write_dta(dt_10, "data/clean/panel/2010-2019-regression.dta")
+write_dta(dt_10, file.path(path_clean_panel, "2010-2019-regression.dta"))
 
 # Save a sample of worker data
 samp <- dt_10[sample(.N, 100000), w_numer]
 samp <- unique(samp)
 samp <- data.table(samp)
 samp <- merge(dt_10, samp, by.x = 'w_numer', by.y = 'samp')
-write_dta(samp, "data/clean/panel/2010-2019-regression-sample.dta")
+write_dta(samp, file.path(path_clean_panel, "2010-2019-regression-sample.dta"))
 
 # Save log
 log_dt_10 <- rbind(log_dt_10, make_log_totals(log_dt_10))
 fwrite(log_dt_10,
-       paste0("data/out/log/log_makepanel_10_", format(Sys.time(), "%Y%m%d"), ".csv"),
+       file.path(path_out_log, paste0("log_makepanel_10_", format(Sys.time(), "%Y%m%d"), ".csv")),
        row.names = FALSE)
 
 rm(dt_10, samp)
@@ -509,11 +523,11 @@ percentiles <- quantile(dt_5$lreal_hrl_wage, probs = c(0.01, 0.99), na.rm = TRUE
 dt_5[lreal_hrl_wage < percentiles[1], lreal_hrl_wage := percentiles[1]]
 dt_5[lreal_hrl_wage > percentiles[2], lreal_hrl_wage := percentiles[2]]
 
-write_dta(dt_5, "data/clean/panel/2010-2019-regression-5ormore.dta")
+write_dta(dt_5, file.path(path_clean_panel, "2010-2019-regression-5ormore.dta"))
 
 log_dt_5 <- rbind(log_dt_5, make_log_totals(log_dt_5))
 fwrite(log_dt_5,
-       paste0("data/out/log/log_makepanel_5_", format(Sys.time(), "%Y%m%d"), ".csv"),
+       file.path(path_out_log, paste0("log_makepanel_5_", format(Sys.time(), "%Y%m%d"), ".csv")),
        row.names = FALSE)
 
 rm(dt_5)
@@ -540,12 +554,11 @@ percentiles_af <- quantile(dt_all$lreal_hrl_wage, probs = c(0.01, 0.99), na.rm =
 dt_all[lreal_hrl_wage < percentiles_af[1], lreal_hrl_wage := percentiles_af[1]]
 dt_all[lreal_hrl_wage > percentiles_af[2], lreal_hrl_wage := percentiles_af[2]]
 
-dir.create("data/clean/panel/allfirms", showWarnings = FALSE, recursive = TRUE)
-write_dta(dt_all, "data/clean/panel/allfirms/2010-2019-regression-allfirms.dta")
+write_dta(dt_all, file.path(path_clean_panel, "allfirms", "2010-2019-regression-allfirms.dta"))
 
 log_dt_all <- rbind(log_dt_all, make_log_totals(log_dt_all))
 fwrite(log_dt_all,
-       paste0("data/out/log/log_makepanel_allfirms_", format(Sys.time(), "%Y%m%d"), ".csv"),
+       file.path(path_out_log, paste0("log_makepanel_allfirms_", format(Sys.time(), "%Y%m%d"), ".csv")),
        row.names = FALSE)
 
 rm(dt_all)
