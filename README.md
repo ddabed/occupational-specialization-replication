@@ -19,11 +19,13 @@ code/
 ├── _paths.do                  set `projectfolder' here -- the only path you must edit
 ├── 0_install_packages.do      run once
 ├── 1_build_task_scores.do     O*Net -> data/raw/scores_isco4dig.dta   (optional)
-├── 2_build_data.do            raw microdata -> analysis panels
+├── 2_build_data.do            raw microdata -> analysis panels (runs R for you)
 ├── 3_run_analysis.do          panels -> every table and figure
 └── subfiles/
     ├── onet/                  the 6 do-files behind 1_build_task_scores.do
-    ├── makepanel.R            panel construction (Phase 2 of 2_build_data.do)
+    ├── build_1_rename_raw_files.do   step 1 of the data build
+    ├── makepanel.R                   step 2 of the data build (R)
+    ├── build_3_label_and_merge.do    step 3 of the data build
     └── *.do                   26 output do-files + 2 shared-intermediate builders
 data/
 ├── raw/                       inputs; see data/raw/README.md
@@ -36,7 +38,8 @@ data/
 | | |
 |---|---|
 | Stata | 17 or later |
-| R | 4.0 or later, with `haven`, `dplyr`, `data.table` |
+| R | 4.0 or later, with `haven`, `readxl`, `fixest`, `xtable`, `docstring`, `dplyr`, `data.table` |
+| `Rscript` | reachable from Stata's `shell` (see setup step 3) |
 | Stata packages | installed by `code/0_install_packages.do` |
 
 ## Setup
@@ -44,10 +47,12 @@ data/
 1. Run `code/0_install_packages.do` once. It installs `reghdfe`, `ftools`,
    `estout`, `gtools`, `xlincom`, `palettes`, `colrspace`, `blindschemes` and the
    `cleanplots` graph scheme.
-2. Set the package root in **two** places — they must match:
-   - `projectfolder` in [`code/_paths.do`](code/_paths.do)
-   - `projectfolder` at the top of [`code/subfiles/makepanel.R`](code/subfiles/makepanel.R)
-3. Place the raw data under `data/raw/` as described in
+2. Set `projectfolder` in [`code/_paths.do`](code/_paths.do) to the folder
+   holding `code/` and `data/`. **This is the only path you have to set** — it is
+   passed through to the R step automatically.
+3. If `Rscript` is not on your `PATH` (common on Windows), also set
+   `global Rscript` in `_paths.do` to the full path of `Rscript.exe`.
+4. Place the raw data under `data/raw/` as described in
    [`data/raw/README.md`](data/raw/README.md).
 
 All other directories (`data/clean/`, `data/out/fig/`, `data/out/tab/`,
@@ -81,14 +86,35 @@ included here. Everything downstream requires the confidential microdata.
 
 ### Step 2 — build the analysis datasets
 
-`2_build_data.do` runs in three phases, because the panel construction happens in
-R. Set the two globals at the top of the file for each phase:
+```stata
+do 2_build_data.do
+```
 
-| Phase | Globals | What it does |
+**One run does everything.** The build has three internal steps, and
+`2_build_data.do` performs all of them in order, launching R for you:
+
+| Step | Runs | What it does |
 |---|---|---|
-| 1 | `runpart1 1`, `runpart3 0` | Converts the raw QdP files from SPSS and renames variables to English |
-| 2 | *(run `code/subfiles/makepanel.R` in R)* | Builds the three panel datasets and the `ind_composition` logs |
-| 3 | `runpart1 0`, `runpart3 1` | Labels the three panels and builds `va_tfp_data/tfp_va_data` |
+| 1 | `subfiles/build_1_rename_raw_files.do` (Stata) | Converts the raw QdP files from SPSS and renames variables to English |
+| 2 | `subfiles/makepanel.R` (R, launched via `Rscript`) | Builds the three panel datasets and the `ind_composition` logs |
+| 3 | `subfiles/build_3_label_and_merge.do` (Stata) | Labels the three panels and builds `va_tfp_data/tfp_va_data` |
+
+Step 2 receives `$projectfolder` as a command-line argument, so the path is never
+set in two places. After R finishes, `2_build_data.do` confirms the three panel
+datasets exist before continuing — if R failed, it stops with the reason and
+prints the exact command to run the R step by hand.
+
+**Restarting after a failure.** The three switches at the top of
+`2_build_data.do` are all `1`. Set one to `0` to *skip* work already done — for
+example, after fixing an R problem and running `makepanel.R` yourself, set
+`global do_step2_panel 0`. Leaving all three at `1` always produces a complete
+build, so forgetting to change them cannot silently give you a partial result.
+
+If you would rather drive R yourself, set `global do_step2_panel 0` and run:
+
+```sh
+Rscript code/subfiles/makepanel.R "/path/to/replication-package"
+```
 
 Datasets produced, all consumed by step 3:
 

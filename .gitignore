@@ -32,3 +32,6 @@ Thumbs.db
 !data/raw/README.md
 !data/raw/isco08_soc10_crosswalk.xls
 !data/raw/scores_isco4dig.dta
+!data/raw/INE/
+!data/raw/INE/PriceIndex.xls
+!data/raw/INE/priceindex.dta

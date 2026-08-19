@@ -7,25 +7,42 @@
 #  repos = "https://cloud.r-project.org"
 #)
 
-library(haven)
-library(readxl)
-library(fixest)
-library(xtable)
-library(docstring)
-library(dplyr)
-library(data.table)
+.required <- c("haven", "readxl", "fixest", "xtable",
+               "docstring", "dplyr", "data.table")
+.missing <- .required[!vapply(.required, requireNamespace, logical(1),
+                              quietly = TRUE)]
+if (length(.missing)) {
+  stop("Missing R packages: ", paste(.missing, collapse = ", "),
+       "\nInstall them with:\n  install.packages(c(",
+       paste0('"', .missing, '"', collapse = ", "), "))",
+       call. = FALSE)
+}
+invisible(lapply(.required, library, character.only = TRUE))
 
 #-------------------------------#
 # Set working directory here
 #-------------------------------#
 
-# REPLICATORS: set this to the folder that contains this replication package
-# (the folder holding code/ and data/). It must match `projectfolder' in
-# code/_paths.do. All paths below are relative to it.
+# 2_build_data.do launches this script and passes the package root as the
+# first argument, so normally there is nothing to set here.
+#
+# Only if you run this script BY HAND (rather than via 2_build_data.do) do you
+# need to set the fallback below to the folder holding code/ and data/.
 projectfolder <- "/CHANGE/ME/path/to/replication-package"
 
+.args <- commandArgs(trailingOnly = TRUE)
+if (length(.args) >= 1 && nzchar(.args[1])) {
+  projectfolder <- .args[1]
+  message("Package root taken from command line: ", projectfolder)
+}
+
 if (grepl("^/CHANGE/ME", projectfolder)) {
-  stop("Set `projectfolder' at the top of makepanel.R before running.")
+  stop("No package root given. Either run this via 2_build_data.do, or pass it:\n",
+       '  Rscript makepanel.R "/path/to/replication-package"\n',
+       "or set `projectfolder' at the top of this file.", call. = FALSE)
+}
+if (!dir.exists(projectfolder)) {
+  stop("Package root does not exist: ", projectfolder, call. = FALSE)
 }
 setwd(projectfolder)
 

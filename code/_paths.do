@@ -14,6 +14,12 @@ if ustrregexm("$projectfolder", "^/CHANGE/ME") {
 	exit 601
 }
 
+* Command Stata uses to launch R for the panel-construction step in
+* 2_build_data.do. "Rscript" works if R is on your PATH. If it is not --
+* common on Windows -- put the full path here, e.g.
+*   global Rscript "C:/Program Files/R/R-4.4.1/bin/Rscript.exe"
+global Rscript "Rscript"
+
 * Variable used to cluster standard errors throughout the analysis (firm id).
 global clustervar fnumber
 
