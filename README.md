@@ -18,6 +18,7 @@ The underlying microdata are confidential and are **not** included. See
 code/
 ├── _paths.do                  set `projectfolder' here -- the only path you must edit
 ├── 0_install_packages.do      run once
+├── 0_check_setup.do           pre-flight check; writes nothing
 ├── 1_build_task_scores.do     O*Net -> data/raw/scores_isco4dig.dta   (optional)
 ├── 2_build_data.do            raw microdata -> analysis panels (runs R for you)
 ├── 3_run_analysis.do          panels -> every table and figure
@@ -54,6 +55,10 @@ data/
    `global Rscript` in `_paths.do` to the full path of `Rscript.exe`.
 4. Place the raw data under `data/raw/` as described in
    [`data/raw/README.md`](data/raw/README.md).
+5. **Run [`code/0_check_setup.do`](code/0_check_setup.do).** It takes seconds,
+   writes nothing, and verifies packages, schemes, `projectfolder`, the input
+   data and R. The full build takes a long time, so confirm this passes before
+   starting it.
 
 All other directories (`data/clean/`, `data/out/fig/`, `data/out/tab/`,
 `data/out/log/`, `data/tmp/`) are created automatically. Stata's `save`,
@@ -61,6 +66,11 @@ All other directories (`data/clean/`, `data/out/fig/`, `data/out/tab/`,
 all up front — a missing folder would otherwise mean output is silently skipped.
 
 ## Running
+
+Timing note: the data build is measured in days, not hours, and
+`3_run_analysis.do` re-estimates the AKM model and the local projections on the
+full panel. Run `0_check_setup.do` first, and expect to leave the build going.
+
 
 Run the Stata files from the `code/` folder (they `include "_paths.do"` by
 relative path and will stop with an explanatory error otherwise):
