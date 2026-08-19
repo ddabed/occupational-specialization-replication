@@ -1,5 +1,5 @@
 *=========================================================================
-* 0_install_packages.do -- run ONCE before 1_build_data.do
+* 0_install_packages.do -- run ONCE before any other file
 *
 * Installs the user-written Stata commands the package depends on.
 * Requires an internet connection. Safe to re-run.

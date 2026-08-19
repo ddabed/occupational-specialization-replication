@@ -1,6 +1,8 @@
-# Confidential microdata and all derived data -- never commit
+# ---------------------------------------------------------------------------
+# Confidential microdata and all derived data. Nothing under data/ is
+# committed except the two public-source files whitelisted at the bottom.
+# ---------------------------------------------------------------------------
 data/raw/*
-!data/raw/README.md
 data/clean/
 data/out/
 data/tmp/
@@ -22,3 +24,11 @@ data/tmp/
 .DS_Store
 Thumbs.db
 *~
+
+# ---------------------------------------------------------------------------
+# Whitelist: derived from public sources only, no confidential content.
+# These rules must stay last -- later rules win in .gitignore.
+# ---------------------------------------------------------------------------
+!data/raw/README.md
+!data/raw/isco08_soc10_crosswalk.xls
+!data/raw/scores_isco4dig.dta

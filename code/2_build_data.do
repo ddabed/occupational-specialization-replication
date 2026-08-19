@@ -1,7 +1,7 @@
 clear all
 
 *=========================================================================
-* 1_build_data.do -- build the analysis datasets from the raw microdata
+* 2_build_data.do -- build the analysis datasets from the raw microdata
 *
 * RUN ORDER (three phases; the R step runs outside Stata):
 *   Phase 1: set runpart1 1, runpart3 0 -> run this file
@@ -11,12 +11,15 @@ clear all
 *   Phase 3: set runpart1 0, runpart3 1 -> run this file again
 *            (labels the 3 panels and builds va_tfp_data/tfp_va_data)
 *
-* Datasets produced (consumed by 2_run_analysis.do):
+* Datasets produced (consumed by 3_run_analysis.do):
 *   data/clean/panel/2010-2019-regression.dta            (min firm size 10 -- main sample)
 *   data/clean/panel/2010-2019-regression-5ormore.dta    (min firm size 5)
 *   data/clean/panel/allfirms/2010-2019-regression-allfirms.dta  (all firms)
 *   data/clean/intermediate/va_tfp_data/tfp_va_data.dta  (tfp_cd_wb, lva, valueadded_mp)
 *   data/raw/QdP-renamed/workers_renamed_occlabel{2010..2019}.dta
+*
+* Requires data/raw/scores_isco4dig.dta (Step 3). It ships with the package;
+* 1_build_task_scores.do rebuilds it from the O*NET release.
 *=========================================================================
 
 * Locate the shared configuration. Run this file from the package's code/ folder.
@@ -35,7 +38,7 @@ global runpart3 1
 if $runpart1==1 {
 
 cap log close
-log using $path_out_log/1_build_data, replace
+log using $path_out_log/2_build_data, replace
 
 
 *-------------------------------------------------------------------------
@@ -262,7 +265,7 @@ log close
 if $runpart3==1 {
 	cap log close
 set logtype text
-log using $path_out_log/1_build_data, append
+log using $path_out_log/2_build_data, append
 
 *-------------------------------------------------------------------------
 * Step 3: Compress saved panel datasets, generate normalized HHI, generate normalized task concentration measure, and add labels

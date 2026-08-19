@@ -1,9 +1,10 @@
 clear all
 
 *=========================================================================
-* 2_run_analysis.do -- produces every table and figure in the paper
+* 3_run_analysis.do -- produces every table and figure in the paper
 *
-* Prerequisites: 0_install_packages.do (once), then 1_build_data.do.
+* Prerequisites: 0_install_packages.do (once), then 1_build_task_scores.do (optional)
+* and 2_build_data.do.
 *
 * All switches below are 1, so a single run reproduces the full package.
 * Output file names state which paper float they are, e.g.
@@ -26,7 +27,7 @@ if _rc {
 include "_paths.do"
 
 cap log close
-log using $path_out_log/2_run_analysis, replace
+log using $path_out_log/3_run_analysis, replace
 
 *-------------------------------------------------------------------------
 * Switches  (ordered as tables/figures appear in the paper)

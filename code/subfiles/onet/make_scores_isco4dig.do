@@ -1,0 +1,98 @@
+* Maps the SOC-level O*Net task composites onto ISCO-08 4-digit codes,
+* producing the task-score lookup used by 2_build_data.do and Table 5.
+* Called by 1_build_task_scores.do.
+*   in : $path_raw/isco08_soc10_crosswalk.xls  (BLS 2010 SOC <-> ISCO-08;
+*        sheet "2010 SOC to ISCO-08", header on row 7, columns A:F)
+*        $path_clean_onet/onet16_tasks_soc.dta
+*   out: $path_raw/isco_soc10_crosswalk.dta
+*        $path_raw/scores_isco4dig.dta   (439 ISCO-08 4-digit codes x 4 scores)
+//////////////////////////////////////
+// Prep the intermediate datsets
+/////////////////////////////////////
+
+** 3. USE SOC10 - ISCO-08 crosswalk
+import excel "$path_raw/isco08_soc10_crosswalk.xls", sheet("2010 SOC to ISCO-08") cellrange(A7:F1132) firstrow clear
+
+
+gen soc2010_aux = substr(SOCCode,1,7)
+	split soc2010_aux, parse("-") gen(soc2010_aux2)
+	gen soc2010 = soc2010_aux21 + soc2010_aux22
+	label var soc2010 "SOC2010 code"
+	
+	
+	rename SOCTitle soc2010_title
+	
+	drop part Comment81711 SOCCode soc2010_aux*
+	
+save $path_raw/isco_soc10_crosswalk, replace
+
+
+** 4. Use Matias et al scores. Assumes that SOC 6 digit = ONET 6dig  (ChatGPT says that differences between SOC and ONET are only at the decimal level)
+ 
+use "$path_clean_onet/onet16_tasks_soc", clear
+
+gen soc2010 = soc_1 + soc_2 
+drop soc_1 soc_2
+
+merge 1:m soc2010 using $path_raw/isco_soc10_crosswalk // 94 occupations not merged 
+	// Unmerged ones are mostly in the "all other" sub-groups
+
+
+gen soc_lastdig = substr(soc2010, 6, 6) // to flag "all others", occs ending in 9. Exception - Legislators
+
+// First best: Input average scores across 5 digits if soc_lastdig == 9 and no scores are assigned
+gen soc_5 = substr(soc2010, 1, 5) 
+
+foreach var in socskills_onet16 routine_onet16 cognitive_onet16 manual_onet16{
+	
+	bysort soc_5: egen m`var'_soc5 = mean(`var')
+	replace `var' = m`var'_soc5 if (soc_lastdig == "9" | soc2010 == "111031") & `var' == .
+	
+}
+
+// Second best: Input average scores across 5 digits if soc_lastdig == 9, and still no scores are assigned
+
+gen soc_4 = substr(soc2010, 1, 4) 
+
+foreach var in socskills_onet16 routine_onet16 cognitive_onet16 manual_onet16{
+	
+	bysort soc_4: egen m`var'_soc4 = mean(`var')
+	replace `var' = m`var'_soc4 if (soc_lastdig == "9" |  soc2010 == "111031") & `var' == .
+	
+}
+
+
+// Check which ones are the unmerged:
+bys ISCO08Code : egen mean_socskills=mean(socskills_onet16)	
+tab ISCO08Code if mean_socskills==.
+list ISCO08Code if mean_socskills==., clean noobs
+
+
+	rename ISCO08Code occup4_10
+	
+replace occup4_10 =  "3322" if occup4_10 ==  "3322 "
+replace occup4_10 =  "5169" if occup4_10 ==  "5169 "
+replace occup4_10 =  "7422" if occup4_10 ==  "7422 " 
+	
+	// Average score for all SOC 2010 occupations that map to the same ISCO 2008 code
+	
+collapse (mean) socskills_onet16 routine_onet16 cognitive_onet16 manual_onet16, by(occup4_10)	
+
+/*
+///// CHECK WITH MATIAS IF THE FOLLOWING CODE IS NEEDED:  
+
+	//Normalize scores within each occ
+	egen sumscores = rowtotal(socskills routine cognitive manual)
+
+	foreach var in socskills routine cognitive manual {
+		gen norm_`var' = `var' / sumscores 
+	}
+*/
+
+  
+	
+save $path_raw/scores_isco4dig, replace
+
+
+
+

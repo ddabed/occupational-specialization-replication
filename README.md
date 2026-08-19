@@ -12,6 +12,25 @@ The underlying microdata are confidential and are **not** included. See
 
 ---
 
+## Layout
+
+```
+code/
+├── _paths.do                  set `projectfolder' here -- the only path you must edit
+├── 0_install_packages.do      run once
+├── 1_build_task_scores.do     O*Net -> data/raw/scores_isco4dig.dta   (optional)
+├── 2_build_data.do            raw microdata -> analysis panels
+├── 3_run_analysis.do          panels -> every table and figure
+└── subfiles/
+    ├── onet/                  the 6 do-files behind 1_build_task_scores.do
+    ├── makepanel.R            panel construction (Phase 2 of 2_build_data.do)
+    └── *.do                   26 output do-files + 2 shared-intermediate builders
+data/
+├── raw/                       inputs; see data/raw/README.md
+├── clean/                     built datasets (created by the code)
+└── out/{fig,tab,log}/         paper output (created by the code)
+```
+
 ## Software requirements
 
 | | |
@@ -45,9 +64,24 @@ relative path and will stop with an explanatory error otherwise):
 cd "<path>/replication-package/code"
 ```
 
-### Step 1 — build the analysis datasets
+### Step 1 — build the O*Net task scores *(optional)*
 
-`1_build_data.do` runs in three phases, because the panel construction happens in
+```stata
+do 1_build_task_scores.do
+```
+
+Rebuilds `data/raw/scores_isco4dig.dta` — the O*Net task composites mapped onto
+ISCO-08 4-digit codes, which feed the task-concentration measure in Table 5.
+
+**This step is optional.** The built file ships with the package, so you only
+need to run it to reproduce the lookup from source. It is the one stage that runs
+entirely on public data: it needs the O*NET 21.0 (2016) text release, which is a
+free download (see [`data/raw/README.md`](data/raw/README.md)) and is not
+included here. Everything downstream requires the confidential microdata.
+
+### Step 2 — build the analysis datasets
+
+`2_build_data.do` runs in three phases, because the panel construction happens in
 R. Set the two globals at the top of the file for each phase:
 
 | Phase | Globals | What it does |
@@ -56,7 +90,7 @@ R. Set the two globals at the top of the file for each phase:
 | 2 | *(run `code/subfiles/makepanel.R` in R)* | Builds the three panel datasets and the `ind_composition` logs |
 | 3 | `runpart1 0`, `runpart3 1` | Labels the three panels and builds `va_tfp_data/tfp_va_data` |
 
-Datasets produced, all consumed by step 2:
+Datasets produced, all consumed by step 3:
 
 - `data/clean/panel/2010-2019-regression.dta` — min firm size 10, **main sample**
 - `data/clean/panel/2010-2019-regression-5ormore.dta` — min firm size 5
@@ -64,10 +98,10 @@ Datasets produced, all consumed by step 2:
 - `data/clean/intermediate/va_tfp_data/tfp_va_data.dta` — `tfp_cd_wb`, `lva`, `valueadded_mp`
 - `data/raw/QdP-renamed/workers_renamed_occlabel{2010..2019}.dta`
 
-### Step 2 — produce the tables and figures
+### Step 3 — produce the tables and figures
 
 ```stata
-do 2_run_analysis.do
+do 3_run_analysis.do
 ```
 
 All switches in the file are set to `1`, so one run reproduces the whole package.
@@ -146,9 +180,9 @@ Every output file states its paper float. 45 files, 23 floats.
   for Figure A2 Panel B in `local-projections-plots-reviewers.do`. These are left
   commented because the counts require statistical-disclosure clearance before
   release. Uncomment them if you have cleared output.
-- **Input not built by the pipeline.** `data/raw/scores_isco4dig.dta` is a
-  pre-made task-scores-by-ISCO4 lookup used by `1_build_data.do` (Step 3) and by
-  Table 5. It must be present before running.
+- **`scores_isco4dig.dta` is committed, not generated on demand.** It is used by
+  `2_build_data.do` (Step 3) and by Table 5. `1_build_task_scores.do` rebuilds it
+  from the O*NET release if you want to verify it.
 - **`ind_het_plots_manuallabels.grec`** holds the manual label positions for
   Figure 2, Panel B and is applied by `wage_reg_HHI_3dig_ind_het_plots.do`.
 - Standard errors are clustered on `clustervar`, set once in `_paths.do` (firm id).
