@@ -1,0 +1,24 @@
+# Confidential microdata and all derived data -- never commit
+data/raw/*
+!data/raw/README.md
+data/clean/
+data/out/
+data/tmp/
+
+# Stata
+*.dta
+*.smcl
+*.log
+~*.stswp
+.statamcp/
+
+# R
+.Rhistory
+.Rapp.history
+.RData
+.Rproj.user/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*~

@@ -1,0 +1,166 @@
+StataFileTM:00001:01100:GREC:                          :
+00008:00008:00001:
+*! classname: twowaygraph_g
+*! family: twoway
+*! date: 28 Jul 2025
+*! time: 11:14:43
+*! graph_scheme: cleanplots
+*! naturallywhite: 1
+*! end
+
+// File created by Graph Editor Recorder.
+// Edit only if you know what you are doing.
+
+.plotregion1.AddTextBox added_text editor -.0683684263826919 1.477487305492601
+.plotregion1.added_text_new = 1
+.plotregion1.added_text_rec = 1
+.plotregion1.added_text[1].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[1].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[1].text = {}
+.plotregion1.added_text[1].text.Arrpush Manufacturing
+// editor text[1] edits
+
+.plotregion1.added_text[1].DragBy .0003941021228705 -.0353553990467255
+// editor text[1] reposition
+
+.plotregion1.AddLine added_lines editor 1.505343074438506 -.0604863839252822 1.550340855043429 -.046692809624815
+.plotregion1.added_lines_new = 1
+.plotregion1.added_lines_rec = 1
+.plotregion1.added_lines[1].style.editstyle  linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(emidblue) pattern(solid) align(inside)) headstyle( symbol(circle) linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(emidblue) pattern(solid) align(inside)) fillcolor(emidblue) size( sztype(relative) val(1.52778) allow_pct(1)) angle(stdarrow) symangle(zero) backsymbol(none) backline( width( sztype(relative) val(.2) allow_pct(1)) color(black) pattern(solid) align(inside)) backcolor(black) backsize( sztype(relative) val(0) allow_pct(1)) backangle(stdarrow) backsymangle(zero)) headpos(neither) editcopy
+// edits
+
+.plotregion1.AddTextBox added_text editor .092819341871337 1.471059051120469
+.plotregion1.added_text_new = 2
+.plotregion1.added_text_rec = 2
+.plotregion1.added_text[2].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[2].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[2].text = {}
+.plotregion1.added_text[2].text.Arrpush Adm. and support service act.
+// editor text[2] edits
+
+.plotregion1.added_text[2].DragBy -.0078820424574097 -.0182133873877071
+// editor text[2] reposition
+
+.plotregion1.AddTextBox added_text editor .0664144996390142 2.570290548755027
+.plotregion1.added_text_new = 3
+.plotregion1.added_text_rec = 3
+.plotregion1.added_text[3].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[3].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[3].text = {}
+.plotregion1.added_text[3].text.Arrpush Electricity, gas, steam, and air cond. supply
+// editor text[3] edits
+
+.plotregion1.added_text[3].DragBy -.0003941021228705 -.0289271446745933
+// editor text[3] reposition
+
+.plotregion1.added_text[3].DragBy 0 -.0482119077909894
+// editor text[3] reposition
+
+.plotregion1.AddTextBox added_text editor -.0392048692902758 2.604574572073064
+.plotregion1.added_text_new = 4
+.plotregion1.added_text_rec = 4
+.plotregion1.added_text[4].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[4].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[4].text = {}
+.plotregion1.added_text[4].text.Arrpush Financial and insurance act.
+// editor text[4] edits
+
+.plotregion1.AddTextBox added_text editor -.0356579501844416 2.213522431101706
+.plotregion1.added_text_new = 5
+.plotregion1.added_text_rec = 5
+.plotregion1.added_text[5].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[5].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[5].text = {}
+.plotregion1.added_text[5].text.Arrpush Information and communication
+// editor text[5] edits
+
+.plotregion1.added_text[5].DragBy -.0366514974269554 -.011785133015575
+// editor text[5] reposition
+
+.plotregion1.added_text[5].DragBy .0421689271471423 -.0299985204032822
+// editor text[5] reposition
+
+.plotregion1.AddTextBox added_text editor -.0699448348741739 2.042102314511521
+.plotregion1.added_text_new = 6
+.plotregion1.added_text_rec = 6
+.plotregion1.added_text[6].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[6].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[6].text = {}
+.plotregion1.added_text[6].text.Arrpush Professional, scientific and tech. act.
+// editor text[6] edits
+
+.plotregion1.AddTextBox added_text editor -.0916204516320506 1.974605643604136
+.plotregion1.added_text_new = 7
+.plotregion1.added_text_rec = 7
+.plotregion1.added_text[7].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[7].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[7].text = {}
+.plotregion1.added_text[7].text.Arrpush Transportation and storage
+// editor text[7] edits
+
+.plotregion1.AddTextBox added_text editor .0691732144991078 2.056030198984473
+.plotregion1.added_text_new = 8
+.plotregion1.added_text_rec = 8
+.plotregion1.added_text[8].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[8].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[8].text = {}
+.plotregion1.added_text[8].text.Arrpush Education
+// editor text[8] edits
+
+.plotregion1.AddTextBox added_text editor .0218809597546494 1.594267259919664
+.plotregion1.added_text_new = 9
+.plotregion1.added_text_rec = 9
+.plotregion1.added_text[9].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[9].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[9].text = {}
+.plotregion1.added_text[9].text.Arrpush Wholesale and retail
+// editor text[9] edits
+
+.plotregion1.added_text[9].DragBy .0078820424574096 -.0235702660311503
+// editor text[9] reposition
+
+.plotregion1.added_text[9].DragBy -.0003941021228705 -.003214127186066
+// editor text[9] reposition
+
+.plotregion1.AddLine added_lines editor 1.681048693943445 .0147871215429806 1.681048693943445 .0226691640003905
+.plotregion1.added_lines_new = 2
+.plotregion1.added_lines_rec = 2
+.plotregion1.added_lines[2].style.editstyle  linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(emidblue) pattern(solid) align(inside)) headstyle( symbol(circle) linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(emidblue) pattern(solid) align(inside)) fillcolor(emidblue) size( sztype(relative) val(1.52778) allow_pct(1)) angle(stdarrow) symangle(zero) backsymbol(none) backline( width( sztype(relative) val(.2) allow_pct(1)) color(black) pattern(solid) align(inside)) backcolor(black) backsize( sztype(relative) val(0) allow_pct(1)) backangle(stdarrow) backsymangle(zero)) headpos(neither) editcopy
+// edits
+
+.plotregion1.AddTextBox added_text editor -.093590962246403 1.514985455996704
+.plotregion1.added_text_new = 10
+.plotregion1.added_text_rec = 10
+.plotregion1.added_text[10].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[10].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[10].text = {}
+.plotregion1.added_text[10].text.Arrpush Construction
+// editor text[10] edits
+
+.plotregion1.added_text[10].DragBy .0019705106143525 -.0632111679926304
+// editor text[10] reposition
+
+.plotregion1.AddTextBox added_text editor -.121966315093078 1.658549803640983
+.plotregion1.added_text_new = 11
+.plotregion1.added_text_rec = 11
+.plotregion1.added_text[11].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[11].style.editstyle size(vsmall) editcopy
+.plotregion1.added_text[11].text = {}
+.plotregion1.added_text[11].text.Arrpush Human health and social work act.
+// editor text[11] edits
+
+.plotregion1.AddTextBox added_text editor -.1247250299531714 1.788186266812311
+.plotregion1.added_text_new = 12
+.plotregion1.added_text_rec = 12
+.plotregion1.added_text[12].style.editstyle  angle(default) size( sztype(relative) val(3.4722) allow_pct(1)) color(black) horizontal(left) vertical(middle) margin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) linegap( sztype(relative) val(0) allow_pct(1)) drawbox(no) boxmargin( gleft( sztype(relative) val(0) allow_pct(1)) gright( sztype(relative) val(0) allow_pct(1)) gtop( sztype(relative) val(0) allow_pct(1)) gbottom( sztype(relative) val(0) allow_pct(1))) fillcolor(bluishgray) linestyle( width( sztype(relative) val(.15) allow_pct(1)) color(black) pattern(solid) align(inside)) box_alignment(east) editcopy
+.plotregion1.added_text[11].DragBy -.0141876764233376 -.1071375728688649
+// editor text[11] edits
+
+.plotregion1.AddLine added_lines editor 1.691762451230332 -.0707330391199148 1.709975838618039 -.1302424596733585
+.plotregion1.added_lines_new = 3
+.plotregion1.added_lines_rec = 3
+.plotregion1.added_lines[3].style.editstyle  linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(emidblue) pattern(solid) align(inside)) headstyle( symbol(circle) linestyle( width( sztype(relative) val(.2) allow_pct(1)) color(emidblue) pattern(solid) align(inside)) fillcolor(emidblue) size( sztype(relative) val(1.52778) allow_pct(1)) angle(stdarrow) symangle(zero) backsymbol(none) backline( width( sztype(relative) val(.2) allow_pct(1)) color(black) pattern(solid) align(inside)) backcolor(black) backsize( sztype(relative) val(0) allow_pct(1)) backangle(stdarrow) backsymangle(zero)) headpos(neither) editcopy
+// edits
+
+
+// <end>
