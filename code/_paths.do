@@ -7,10 +7,28 @@
 * ONLY line you need to change to run the package.
 *=========================================================================
 
+* IMPORTANT: put the path ALONE on the line below. `global' takes the whole
+* rest of the line as the value, and `*' does not start a comment in the
+* middle of a command -- so anything you add after the closing quote becomes
+* part of the path.
 global projectfolder "/CHANGE/ME/path/to/replication-package"
 
-if ustrregexm("$projectfolder", "^/CHANGE/ME") {
+* Guard 1: the placeholder has not been replaced.
+* Compound quotes `"..."' are used so a stray quote in the value still gives a
+* readable message instead of a "type mismatch" error.
+if strpos(`"$projectfolder"', "CHANGE/ME") > 0 {
 	display as error "Set {bf:global projectfolder} in code/_paths.do before running."
+	exit 601
+}
+
+* Guard 2: the folder must actually exist. This catches typos, and catches a
+* trailing comment having been swallowed into the value.
+mata: st_local("pf_ok", strofreal(direxists(st_global("projectfolder"))))
+if `pf_ok' == 0 {
+	display as error `"projectfolder does not point to an existing folder:"'
+	display as error `"    $projectfolder"'
+	display as error "Check code/_paths.do. The path must be alone on the line,"
+	display as error "with nothing after the closing quote."
 	exit 601
 }
 
@@ -70,5 +88,15 @@ cap mkdir "$path_temp"
 *-------------------------------------------------------------------------
 set more off
 version 17.0
+* The figures require the cleanplots scheme (and Figure 1 uses plotplain).
+* Check it up front: without this, the run dies on a cryptic scheme error, or
+* worse, silently draws the figures in the wrong scheme.
+capture findfile scheme-cleanplots.scheme
+if _rc {
+	display as error "The {bf:cleanplots} graph scheme is not installed."
+	display as error "Run {bf:0_install_packages.do} first -- it installs cleanplots from"
+	display as error "https://tdmize.github.io/data/cleanplots"
+	exit 601
+}
 set scheme cleanplots
 set logtype text

@@ -7,8 +7,6 @@ clear all
 * graph schemes, the projectfolder setting, the input data, and R. It takes
 * seconds and WRITES NOTHING, so it is safe to run at any time.
 *
-* The full build takes a long time, so running this first turns "it died
-* after two days because a package was missing" into a ten-second answer.
 *=========================================================================
 
 global chk_nfail 0
