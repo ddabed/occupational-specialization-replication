@@ -29,8 +29,28 @@ available by Statistics Portugal (INE) under a data-use agreement. Both require
 an approved research project and a signed confidentiality agreement; neither
 dataset may be redistributed by the authors.
 
-`QdP-renamed/` is created by `code/2_build_data.do` (Phase 1) and holds the
-English-renamed versions of the raw QdP files. Do not populate it by hand.
+### `QdP/` versus `QdP-renamed/`
+
+These are two different things and the code uses both:
+
+| Folder | Contents | Read by |
+|---|---|---|
+| `QdP/` | the original SPSS files as delivered | step 1 of `2_build_data.do`, and nothing else |
+| `QdP-renamed/` | Stata versions with English variable names, **written by step 1** | step 2 (`makepanel.R`), **and Table 6** (`wage_reg_HHI_3dig_withlayers.do`) |
+
+Two consequences:
+
+- `QdP-renamed/` is not a scratch folder. Table 6 reads
+  `workers_renamed_occlabel{year}.dta` directly at analysis time, so these files
+  must still be present when you run `3_run_analysis.do` — not just during the
+  build.
+- If you already hold a complete `QdP-renamed/` (all ten years of both
+  `workers_renamed_occlabel*` and `firms_renamed*`), you do **not** need
+  `QdP/` at all: set `global do_step1_rename 0` in `2_build_data.do` and the
+  original SPSS files are never touched. `0_check_setup.do` detects this and
+  tells you.
+
+Both folders hold confidential microdata and neither may be redistributed.
 
 ## Must be downloaded separately — public
 
