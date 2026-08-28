@@ -95,7 +95,7 @@ capture findfile scheme-cleanplots.scheme
 if _rc {
 	display as error "The {bf:cleanplots} graph scheme is not installed."
 	display as error "Run {bf:0_install_packages.do} first -- it installs cleanplots from"
-	display as error "https://tdmize.github.io/data/cleanplots"
+	display as error `"    net install cleanplots, from("https://tdmize.github.io/data") replace"'
 	exit 601
 }
 set scheme cleanplots
