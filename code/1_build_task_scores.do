@@ -36,15 +36,65 @@ include "_paths.do"
 cap log close
 log using $path_out_log/1_build_task_scores, replace
 
-* Fail early with a clear message if the O*NET download is missing.
-foreach file in "Abilities" "Knowledge" "Skills" "Work Context" {
-	capture confirm file "$path_raw_onet/`file'.txt"
+*-------------------------------------------------------------------------
+* Is the O*NET download present?
+* Checked file by file rather than in a foreach loop, because one of the
+* names contains a space ("Work Context.txt").
+*-------------------------------------------------------------------------
+global onet_ok 1
+global onet_missing ""
+
+capture program drop _onetck
+program define _onetck
+	args fname
+	capture confirm file "$path_raw_onet/`fname'"
 	if _rc {
-		display as error "Missing: $path_raw_onet/`file'.txt"
-		display as error "Download O*NET 21.0 (2016) -- see data/raw/README.md."
-		exit 601
+		global onet_ok 0
+		global onet_missing "${onet_missing} `fname'"
 	}
+end
+
+_onetck "Abilities.txt"
+_onetck "Knowledge.txt"
+_onetck "Skills.txt"
+_onetck "Work Context.txt"
+capture program drop _onetck
+
+if ${onet_ok} == 0 {
+
+	* The lookup SHIPS with the package, so a missing O*NET download is only a
+	* problem if you actually meant to rebuild it. If the output is already
+	* there, say so and stop cleanly rather than raising an error.
+	capture confirm file "$path_raw/scores_isco4dig.dta"
+	if _rc == 0 {
+		display _n "{hline 70}"
+		display "  O*NET SOURCE FILES NOT FOUND -- skipping the rebuild."
+		display ""
+		display "  Missing in $path_raw_onet :"
+		display "     ${onet_missing}"
+		display ""
+		display "  TO BUILD FROM SCRATCH (what this file is for): download the"
+		display "  O*NET 21.0 (2016) text release, put those files in the folder"
+		display "  above, and run this file again. See data/raw/README.md."
+		display ""
+		display "  TO PROCEED WITHOUT REBUILDING: data/raw/scores_isco4dig.dta is"
+		display "  already present and is what the rest of the package consumes,"
+		display "  so you can continue with"
+		display "      do 2_build_data.do"
+		display "{hline 70}"
+		cap log close
+		exit
+	}
+
+	display as error _n "Cannot build the task scores: the O*NET files are missing AND"
+	display as error "data/raw/scores_isco4dig.dta is not present either."
+	display as error "Missing in $path_raw_onet :${onet_missing}"
+	display as error "Download O*NET 21.0 (2016) -- see data/raw/README.md."
+	cap log close
+	exit 601
 }
+
+display _n "O*NET files found. Rebuilding scores_isco4dig.dta from source."
 
 *-------------------------------------------------------------------------
 * Step 1: build the four O*Net modules at the SOC level
