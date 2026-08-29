@@ -3,8 +3,12 @@ clear all
 *=========================================================================
 * 3_run_analysis.do -- produces every table and figure in the paper
 *
-* Prerequisites: 0_install_packages.do (once), then 1_build_task_scores.do (optional)
-* and 2_build_data.do.
+* Prerequisites: 0_install_packages.do (once), then 1_build_task_scores.do
+* (optional) and 2_build_data.do.
+*
+* THIS IS THE LONG ONE -- expect days, not hours. Section 1 re-estimates the
+* AKM model (worker and firm fixed effects on the full panel) and the local
+* projections; those dominate the runtime. Plan it as an unattended run.
 *
 * All switches below are 1, so a single run reproduces the full package.
 * Output file names state which paper float they are, e.g.

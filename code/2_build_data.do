@@ -4,7 +4,8 @@ clear all
 * 2_build_data.do -- build the analysis datasets from the raw microdata
 *
 * Run this ONCE. It performs all three build steps in order, including the
-* R panel construction, which it launches for you:
+* R panel construction, which it launches for you. Expect roughly a couple of
+* hours; the multi-day stage of this package is 3_run_analysis.do, not this.
 *
 *   Step 1  build_1_rename_raw_files.do  rename the raw QdP files (Stata)
 *   Step 2  makepanel.R                  build the three panel datasets (R)
@@ -62,7 +63,7 @@ else display _n "STEP 1 of 3 skipped (do_step1_rename = 0)."
 *=========================================================================
 if $do_step2_panel == 1 {
 	display _n(2) "{hline 70}"
-	display "  STEP 2 of 3: building panel datasets in R (this takes a while)"
+	display "  STEP 2 of 3: building panel datasets in R (the slowest step here)"
 	display "{hline 70}"
 
 	shell "$Rscript" "$path_do_sub/makepanel.R" "$projectfolder"

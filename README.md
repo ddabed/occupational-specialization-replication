@@ -57,8 +57,8 @@ data/
    [`data/raw/README.md`](data/raw/README.md).
 5. **Run [`code/0_check_setup.do`](code/0_check_setup.do).** It takes seconds,
    writes nothing, and verifies packages, schemes, `projectfolder`, the input
-   data and R. The full build takes a long time, so confirm this passes before
-   starting it.
+   data and R. The analysis stage runs for days, so confirm this passes before
+   starting anything.
 
 All other directories (`data/clean/`, `data/out/fig/`, `data/out/tab/`,
 `data/out/log/`, `data/tmp/`) are created automatically. Stata's `save`,
@@ -67,9 +67,10 @@ all up front — a missing folder would otherwise mean output is silently skippe
 
 ## Running
 
-Timing note: the data build is measured in days, not hours, and
-`3_run_analysis.do` re-estimates the AKM model and the local projections on the
-full panel. Run `0_check_setup.do` first, and expect to leave the build going.
+Timing note: `2_build_data.do` takes a couple of hours. **`3_run_analysis.do`
+is the long one — measured in days**, because it re-estimates the AKM model
+(worker and firm fixed effects on the full panel) and the local projections.
+Run `0_check_setup.do` first, and plan the analysis stage as an unattended run.
 
 
 Run the Stata files from the `code/` folder (they `include "_paths.do"` by

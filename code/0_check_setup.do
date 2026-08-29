@@ -7,6 +7,9 @@ clear all
 * graph schemes, the projectfolder setting, the input data, and R. It takes
 * seconds and WRITES NOTHING, so it is safe to run at any time.
 *
+* Worth doing first because 3_run_analysis.do runs for DAYS (it re-estimates
+* the AKM model and the local projections). 2_build_data.do is comparatively
+* quick -- a couple of hours.
 *=========================================================================
 
 global chk_nfail 0
@@ -199,7 +202,7 @@ if ${chk_nfail} == 0 & ${chk_nwarn} == 0 {
 	display "      do 3_run_analysis.do"
 }
 else if ${chk_nfail} == 0 {
-	display "  PASSED with ${chk_nwarn} warning(s). Read them before starting a long run."
+	display "  PASSED with ${chk_nwarn} warning(s). Read them before the multi-day analysis run."
 }
 else {
 	display as error "  ${chk_nfail} failure(s), ${chk_nwarn} warning(s). Fix the failures first."
