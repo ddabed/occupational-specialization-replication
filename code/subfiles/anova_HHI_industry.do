@@ -213,7 +213,7 @@ file write myfile "Task concentration & `val1' & `val2' & `val3' & `val4' \\" _n
 
 
 * Write the table footer with note
-file write myfile "\midrule" _n
+file write myfile "\bottomrule" _n
 file write myfile "\end{tabular}" _n
 
 

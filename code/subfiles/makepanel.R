@@ -486,13 +486,6 @@ dt_10[lreal_hrl_wage > percentiles[2], lreal_hrl_wage := percentiles[2]]
 # Save main dataset (create the output folder if it does not exist)
 write_dta(dt_10, file.path(path_clean_panel, "2010-2019-regression.dta"))
 
-# Save a sample of worker data
-samp <- dt_10[sample(.N, 100000), w_numer]
-samp <- unique(samp)
-samp <- data.table(samp)
-samp <- merge(dt_10, samp, by.x = 'w_numer', by.y = 'samp')
-write_dta(samp, file.path(path_clean_panel, "2010-2019-regression-sample.dta"))
-
 # Save log
 log_dt_10 <- rbind(log_dt_10, make_log_totals(log_dt_10))
 fwrite(log_dt_10,

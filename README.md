@@ -46,8 +46,8 @@ data/
 ## Setup
 
 1. Run `code/0_install_packages.do` once. It installs `reghdfe`, `ftools`,
-   `estout`, `gtools`, `xlincom`, `palettes`, `colrspace`, `blindschemes` and the
-   `cleanplots` graph scheme.
+   `require`, `estout`, `gtools`, `xlincom`, `palettes`, `colrspace`,
+   `blindschemes`, `prodest` and the `cleanplots` graph scheme.
 2. Set `projectfolder` in [`code/_paths.do`](code/_paths.do) to the folder
    holding `code/` and `data/`. **This is the only path you have to set** — it is
    passed through to the R step automatically.

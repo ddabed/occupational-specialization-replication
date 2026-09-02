@@ -8,7 +8,6 @@ global max = 5 // how many years since initial exposure
 
 
 use $path_clean_panel/2010-2019-regression.dta, clear
-*use  $path_clean_panel/2010-2019-regression-sample.dta, clear	
 
 
 xtset w_numer year
