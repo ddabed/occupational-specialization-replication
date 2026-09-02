@@ -57,7 +57,7 @@ else display "    ok    Stata `c(stata_version)' `c(flavor)'"
 * 2. User-written commands
 *-------------------------------------------------------------------------
 display _n "[2] Required user-written commands"
-foreach cmd in reghdfe ftools esttab estpost eststo estadd gcollapse gegen xlincom colorpalette {
+foreach cmd in reghdfe ftools require esttab estpost eststo estadd gcollapse gegen xlincom colorpalette prodest {
 	capture which `cmd'
 	if _rc {
 		display as error "    FAIL  `cmd' not installed"

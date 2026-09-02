@@ -7,12 +7,14 @@
 
 ssc install reghdfe,   replace   // high-dimensional fixed-effects regressions
 ssc install ftools,    replace   // required by reghdfe
+ssc install require,   replace   // required by reghdfe (dependency checks)
 ssc install estout,    replace   // esttab / estpost table export
 ssc install gtools,    replace   // gcollapse, gegen (fast collapse/egen)
 ssc install xlincom,   replace   // linear combinations of coefficients
 ssc install palettes,  replace   // colorpalette
 ssc install colrspace, replace   // required by palettes
 ssc install blindschemes, replace
+ssc install prodest,   replace   // TFP estimation (Wooldridge/ACF/LP/OP)
 
 * Graph scheme used by every figure. Not on SSC, so it comes from the author's
 * site. Deliberately NOT wrapped in `capture': a silent failure here would only
