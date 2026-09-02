@@ -3,6 +3,9 @@
 **Firm Organization and Worker Outcomes: The Role of Occupational Specialization**
 Guido Matias Cortes, Diego Dabed, Ana Oliveira, Anna Salomons
 
+*Labour Economics* 101 (August 2026), 102940.
+<https://doi.org/10.1016/j.labeco.2026.102940>
+
 This repository contains the complete code to reproduce every table and figure in
 the paper. Every output file is named for the paper float it produces (see
 [Output map](#output-map)).
