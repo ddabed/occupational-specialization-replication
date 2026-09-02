@@ -1,3 +1,4 @@
+eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 
 * Firm-level summary statistics - Combined table

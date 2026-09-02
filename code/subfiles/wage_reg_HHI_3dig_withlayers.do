@@ -1,3 +1,4 @@
+eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 *Building the layers
 
 foreach y in 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 {

@@ -1,3 +1,4 @@
+eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 use $path_clean_panel/2010-2019-regression.dta, clear
 
 

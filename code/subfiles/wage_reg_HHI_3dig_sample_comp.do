@@ -1,3 +1,4 @@
+eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 ///// TABLE: HHI at 3-digit occupation — sample comparison
 ///// Columns: 50+ employees | 5+ employees
