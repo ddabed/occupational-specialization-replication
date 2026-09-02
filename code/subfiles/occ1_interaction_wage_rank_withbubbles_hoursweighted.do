@@ -108,7 +108,7 @@ generate pos = 3
 
 //Occ1 Employment weight in hours worked
 gegen tothoursworked = sum(reg_hours_month)
-gen occweight_hours = reg_hours_month / tothours 
+gen occweight_hours = reg_hours_month / tothoursworked 
 
 	//consistency check
 	gegen test = sum(occweight_hours)

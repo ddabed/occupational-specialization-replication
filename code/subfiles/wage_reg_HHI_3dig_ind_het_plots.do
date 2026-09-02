@@ -113,7 +113,7 @@ gen indweight = number / totemp
 
 //Ind1 Employment weight in hours worked
 gegen tothoursworked = sum(reg_hours_month)
-gen indweight_hours = reg_hours_month / tothours 
+gen indweight_hours = reg_hours_month / tothoursworked 
 
 	//consistency check
 	gegen test = sum(indweight_hours)
