@@ -1,6 +1,9 @@
+* Named log, so it coexists with the master log that 3_run_analysis.do opens.
+* Do NOT use a plain `log close' here, that closes the MASTER log and leaves
+* everything after Table A1 unlogged.
+capture log close indcomp
+log using "$path_out_log/ind_composition_stages.log", replace name(indcomp)
 
-capture log close
-log using "$path_out_log/ind_composition_stages.log", replace
 
 * Average real wage per 1-digit industry (for ordering, low to high)
 use $path_clean_panel/2010-2019-regression.dta, clear
@@ -173,4 +176,4 @@ file write texfile "\bottomrule" _n
 file write texfile "\end{tabular}" _n
 file close texfile
 
-log close
+log close indcomp
