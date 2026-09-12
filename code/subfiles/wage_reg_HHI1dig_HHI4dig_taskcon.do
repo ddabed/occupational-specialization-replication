@@ -1,7 +1,20 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI1dig_HHI4dig_taskcon.do -- Table 5, Panels A, B and C
+*
+* Repeats the two most demanding specifications of Table 4 (columns 5 and 6)
+* using three alternative measures of firm specialization in place of the
+* 3-digit HHI: the 1-digit HHI, the 4-digit HHI, and task concentration.
+*
+* Each measure is copied into a common variable name, `specialization', so
+* that all six columns report on a single table row.
+*   out: $path_out_tab/table_05_panel_a_alt_measures_monthly_earnings.tex
+*        $path_out_tab/table_05_panel_b_alt_measures_monthly_hours.tex
+*        $path_out_tab/table_05_panel_c_alt_measures_hourly_wage.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 use $path_clean_panel/2010-2019-regression.dta, clear
 
-*sample 20
 
 
 	foreach measure in nHHI_1dig nHHI_4dig ntaskcon {
@@ -36,7 +49,7 @@ use $path_clean_panel/2010-2019-regression.dta, clear
 	
 
 
-/// Table Output: Panel A (Monthly earnings)
+* Table output: Panel A (log monthly earnings)
 
 local tabtitle "Wage regression: HHI at 1-digit, 4-digit, and task concentration."
 local tablabel "table_05_panel_a_alt_measures_monthly_earnings"
@@ -65,7 +78,7 @@ esttab nHHI_1dig_lreal_wage4 nHHI_1dig_lreal_wage5 nHHI_4dig_lreal_wage4 nHHI_4d
 	replace
 
 
-/// Table Output: Panel B (Monthly hours)
+* Table output: Panel B (log total monthly hours)
 
 local tablabel "table_05_panel_b_alt_measures_monthly_hours"
 
@@ -89,7 +102,7 @@ esttab nHHI_1dig_lreg_hours_month4 nHHI_1dig_lreg_hours_month5 nHHI_4dig_lreg_ho
 	replace
 
 
-/// Table Output: Panel C (Hourly wage)
+* Table output: Panel C (log hourly wage)
 
 local tablabel "table_05_panel_c_alt_measures_hourly_wage"
 

@@ -1,8 +1,16 @@
-eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig_sample_comp.do -- Table A5, Panels A, B and C
+*
+* Robustness of Table 4 to the minimum firm size. The two specifications of
+* Table 4 columns 5 and 6 are re-run on a stricter sample (50 or more
+* employees, obtained by filtering the main panel) and on a looser one (5 or
+* more employees, which is its own panel built by makepanel.R).
+*   out: $path_out_tab/table_a05_panel_a_size_cutoffs_monthly_earnings.tex
+*        $path_out_tab/table_a05_panel_b_size_cutoffs_monthly_hours.tex
+*        $path_out_tab/table_a05_panel_c_size_cutoffs_hourly_wage.tex
+*-------------------------------------------------------------------------
 
-///// TABLE: HHI at 3-digit occupation — sample comparison
-///// Columns: 50+ employees | 5+ employees
-///// Specs equivalent to A4, A5, B4, B5, C4, C5 from main table
+eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 
 ** ============================================================
@@ -15,7 +23,7 @@ label var nHHI_3dig "HHI 3-digit"
 
 ** PANEL A
 
-*A4. industry FE (50+ emp)
+*A4. Table 4 col. 5 specification (50+ employees)
 eststo s50_monthlywage4: reghdfe lreal_wage c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -26,7 +34,7 @@ eststo s50_monthlywage4: reghdfe lreal_wage c.nHHI_3dig lfsize female native , n
 	quietly estadd local fixed3dig "X", replace
 	quietly estadd local fixedworker " ", replace
 
-*A5. worker FE (50+ emp)
+*A5. Table 4 col. 6 specification (50+ employees)
 eststo s50_monthlywage5: reghdfe lreal_wage c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -39,7 +47,7 @@ eststo s50_monthlywage5: reghdfe lreal_wage c.nHHI_3dig lfsize , noconstant abso
 
 ** PANEL B
 
-*B4. industry FE (50+ emp)
+*B4. Table 4 col. 5 specification (50+ employees)
 eststo s50_hours4: reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -50,7 +58,7 @@ eststo s50_hours4: reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , n
 	quietly estadd local fixed3dig "X", replace
 	quietly estadd local fixedworker " ", replace
 
-*B5. worker FE (50+ emp)
+*B5. Table 4 col. 6 specification (50+ employees)
 eststo s50_hours5: reghdfe lreg_hours_month c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -63,7 +71,7 @@ eststo s50_hours5: reghdfe lreg_hours_month c.nHHI_3dig lfsize , noconstant abso
 
 ** PANEL C
 
-*C4. industry FE (50+ emp)
+*C4. Table 4 col. 5 specification (50+ employees)
 eststo s50_hourlywage4: reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -74,7 +82,7 @@ eststo s50_hourlywage4: reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native 
 	quietly estadd local fixed3dig "X", replace
 	quietly estadd local fixedworker " ", replace
 
-*C5. worker FE (50+ emp)
+*C5. Table 4 col. 6 specification (50+ employees)
 eststo s50_hourlywage5: reghdfe lreal_hrl_wage c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -94,7 +102,7 @@ use $path_clean_panel/2010-2019-regression-5ormore.dta, clear
 
 ** PANEL A
 
-*A4. industry FE (5+ emp)
+*A4. Table 4 col. 5 specification (5+ employees)
 eststo s5_monthlywage4: reghdfe lreal_wage c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -105,7 +113,7 @@ eststo s5_monthlywage4: reghdfe lreal_wage c.nHHI_3dig lfsize female native , no
 	quietly estadd local fixed3dig "X", replace
 	quietly estadd local fixedworker " ", replace
 
-*A5. worker FE (5+ emp)
+*A5. Table 4 col. 6 specification (5+ employees)
 eststo s5_monthlywage5: reghdfe lreal_wage c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -118,7 +126,7 @@ eststo s5_monthlywage5: reghdfe lreal_wage c.nHHI_3dig lfsize , noconstant absor
 
 ** PANEL B
 
-*B4. industry FE (5+ emp)
+*B4. Table 4 col. 5 specification (5+ employees)
 eststo s5_hours4: reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -129,7 +137,7 @@ eststo s5_hours4: reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , no
 	quietly estadd local fixed3dig "X", replace
 	quietly estadd local fixedworker " ", replace
 
-*B5. worker FE (5+ emp)
+*B5. Table 4 col. 6 specification (5+ employees)
 eststo s5_hours5: reghdfe lreg_hours_month c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -142,7 +150,7 @@ eststo s5_hours5: reghdfe lreg_hours_month c.nHHI_3dig lfsize , noconstant absor
 
 ** PANEL C
 
-*C4. industry FE (5+ emp)
+*C4. Table 4 col. 5 specification (5+ employees)
 eststo s5_hourlywage4: reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -153,7 +161,7 @@ eststo s5_hourlywage4: reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native ,
 	quietly estadd local fixed3dig "X", replace
 	quietly estadd local fixedworker " ", replace
 
-*C5. worker FE (5+ emp)
+*C5. Table 4 col. 6 specification (5+ employees)
 eststo s5_hourlywage5: reghdfe lreal_hrl_wage c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
 	quietly estadd local fixedyear "X", replace
@@ -173,7 +181,7 @@ eststo s5_hourlywage5: reghdfe lreal_hrl_wage c.nHHI_3dig lfsize , noconstant ab
 
 local tabtitle "Wage regression: HHI at 3-digit occupation — sample comparison (baseline, 50+, 5+ employees)."
 
-/// Panel A (Monthly earnings)
+* Panel A (log monthly earnings)
 
 local tablabel "table_a05_panel_a_size_cutoffs_monthly_earnings"
 
@@ -197,7 +205,7 @@ esttab s50_monthlywage4 s50_monthlywage5 s5_monthlywage4 s5_monthlywage5 using $
 	replace
 
 
-/// Panel B (Monthly hours)
+* Panel B (log total monthly hours)
 
 local tablabel "table_a05_panel_b_size_cutoffs_monthly_hours"
 
@@ -220,7 +228,7 @@ esttab s50_hours4 s50_hours5 s5_hours4 s5_hours5 using $path_out_tab/`tablabel'.
 	replace
 
 
-/// Panel C (Hourly wage)
+* Panel C (log hourly wage)
 
 local tablabel "table_a05_panel_c_size_cutoffs_hourly_wage"
 

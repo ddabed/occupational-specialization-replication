@@ -209,15 +209,15 @@ Every output file states its paper float. 45 files, 23 floats.
 | Figure 5, Panel B | `figure_05_panel_b_lp_switching.pdf` | `local-projections-plots.do` |
 | Figure A1, Panel A | `figure_a01_panel_a_akm_tfp.pdf` | `AKM_firm_HHI_VA_TFP.do` |
 | Figure A1, Panel B | `figure_a01_panel_b_akm_tfp_decomposition.pdf` | `AKM_firm_HHI_VA_TFP.do` |
-| Figure A2, Panel A | `figure_a02_panel_a_lp_occupation_stayers.pdf` | `local-projections-plots-reviewers.do` |
-| Figure A2, Panel B | `figure_a02_panel_b_lp_akm_controlled.pdf` | `local-projections-plots-reviewers.do` |
+| Figure A2, Panel A | `figure_a02_panel_a_lp_occupation_stayers.pdf` | `local-projections-plots-robustness.do` |
+| Figure A2, Panel B | `figure_a02_panel_b_lp_akm_controlled.pdf` | `local-projections-plots-robustness.do` |
 
 ## Notes on the code
 
 - **Two figure notes are not written by default.** `local-projections-plots.do`
   contains commented-out blocks that write `*_note.tex` files reporting the range
   of observation counts across horizons for the Figure 5 panels; the same exists
-  for Figure A2 Panel B in `local-projections-plots-reviewers.do`. These are left
+  for Figure A2 Panel B in `local-projections-plots-robustness.do`. These are left
   commented because the counts require statistical-disclosure clearance before
   release. Uncomment them if you have cleared output.
 - **`scores_isco4dig.dta` is committed, not generated on demand.** It is used by

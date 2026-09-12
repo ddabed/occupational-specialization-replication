@@ -16,10 +16,10 @@ ssc install colrspace, replace   // required by palettes
 ssc install blindschemes, replace
 ssc install prodest,   replace   // TFP estimation (Wooldridge/ACF/LP/OP)
 
-* Graph scheme used by every figure. Not on SSC, so it comes from the author's
-* site. Deliberately NOT wrapped in `capture': a silent failure here would only
-* show up later as a cryptic scheme error, or as figures drawn in the wrong
-* scheme.
+* Graph scheme used by every figure. Not on SSC, so it comes from the scheme
+* author's own site. Failures are caught and reported rather than left silent:
+* an unnoticed failure here surfaces much later as a cryptic scheme error, or
+* worse, as figures drawn in the wrong scheme.
 capture findfile scheme-cleanplots.scheme
 if _rc {
 	display _n "Installing the cleanplots scheme..."
@@ -29,6 +29,7 @@ if _rc {
 	* .../data/cleanplots makes Stata look for
 	*   .../data/cleanplots/cleanplots/scheme-cleanplots.scheme
 	* which does not exist, and the install fails with r(601).
+	* capture noisily: show the error, but fall through to the fallback below.
 	capture noisily net install cleanplots, from("https://tdmize.github.io/data") replace
 
 	if _rc {

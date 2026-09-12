@@ -1,14 +1,34 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig.do -- Table 4, Panels A, B and C
+*
+* Main wage regressions: log outcome on the normalized 3-digit occupational
+* HHI of the worker's firm. The six columns add controls cumulatively, and the
+* same six specifications are run for each of the three outcomes:
+*
+*   col 1  year, region and age x education FE, plus female and native
+*   col 2  + log firm size
+*   col 3  + 1-digit occupation FE
+*   col 4  + 3-digit occupation FE, in place of 1-digit
+*   col 5  + 4-digit industry x year FE
+*   col 6  + worker FE (which absorb female and native)
+*
+* The three panels are written to three separate .tex fragments.
+*   out: $path_out_tab/table_04_panel_a_monthly_earnings.tex
+*        $path_out_tab/table_04_panel_b_monthly_hours.tex
+*        $path_out_tab/table_04_panel_c_hourly_wage.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
 label var nHHI_3dig "HHI 3-digit"
 
-///// TABLE, 3 PANELS
+*=========================================================================
+** PANEL A: log real monthly wage
+*=========================================================================
 
-** PANEL A: Monthly Base Wage as Dependent Variable
-
-*A0. dep var: monthly wage; HHI worker controls no firm size
+*A0. baseline: worker controls, no firm size
 eststo HHI_3dig_monthlywage0: reghdfe lreal_wage c.nHHI_3dig female native , noconstant absorb(year fNUTS2 age#educ) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -19,7 +39,7 @@ eststo HHI_3dig_monthlywage0: reghdfe lreal_wage c.nHHI_3dig female native , noc
 	quietly estadd local fixedworker " ", replace
 
 
-*A1. 1 + firm size
+*A1. A0 + firm size
 eststo HHI_3dig_monthlywage1:reghdfe lreal_wage c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -30,7 +50,7 @@ eststo HHI_3dig_monthlywage1:reghdfe lreal_wage c.nHHI_3dig lfsize female native
 	quietly estadd local fixedworker " ", replace
 	
 
-*A2. 1.1 + 1 digit isco FE
+*A2. A1 + 1-digit ISCO occupation FE
 eststo HHI_3dig_monthlywage2:reghdfe lreal_wage c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ occup1_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -41,7 +61,7 @@ eststo HHI_3dig_monthlywage2:reghdfe lreal_wage c.nHHI_3dig lfsize female native
 	quietly estadd local fixedworker " ", replace
 	 
 
-*A3. 1.2 - 1 digit isco FE + 3 digit isco FE
+*A3. A2 with 3-digit in place of 1-digit ISCO occupation FE
 eststo HHI_3dig_monthlywage3:reghdfe lreal_wage c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -52,7 +72,7 @@ eststo HHI_3dig_monthlywage3:reghdfe lreal_wage c.nHHI_3dig lfsize female native
 	quietly estadd local fixedworker " ", replace
 
 	
-*A4. 1.3 + industry fixed effect
+*A4. A3 + 4-digit industry x year FE
 eststo HHI_3dig_monthlywage4:reghdfe lreal_wage c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind "X", replace
@@ -63,7 +83,7 @@ eststo HHI_3dig_monthlywage4:reghdfe lreal_wage c.nHHI_3dig lfsize female native
 	quietly estadd local fixedworker " ", replace
 	 
 
-*A5. 1.4 + worker FE
+*A5. A4 + worker FE
 eststo HHI_3dig_monthlywage5:reghdfe lreal_wage c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind "X", replace
@@ -76,9 +96,11 @@ eststo HHI_3dig_monthlywage5:reghdfe lreal_wage c.nHHI_3dig lfsize , noconstant 
 	
 	
 	
-** PANEL B: Total monthly hours
+*=========================================================================
+** PANEL B: log total monthly hours
+*=========================================================================
 
-*B0. dep var: monthly hours wage; HHI worker controls no firm size
+*B0. baseline: worker controls, no firm size
 eststo HHI_3dig_hours0: reghdfe lreg_hours_month c.nHHI_3dig female native , noconstant absorb(year fNUTS2 age#educ) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -89,7 +111,7 @@ eststo HHI_3dig_hours0: reghdfe lreg_hours_month c.nHHI_3dig female native , noc
 	quietly estadd local fixedworker " ", replace
 
 
-*B1. 1 + firm size
+*B1. B0 + firm size
 eststo HHI_3dig_hours1:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -100,7 +122,7 @@ eststo HHI_3dig_hours1:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native
 	quietly estadd local fixedworker " ", replace
 	 
 
-*B2. 1.1 + 1 digit isco FE
+*B2. B1 + 1-digit ISCO occupation FE
 eststo HHI_3dig_hours2:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ occup1_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -112,7 +134,7 @@ eststo HHI_3dig_hours2:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native
 	 
 
 	
-*B3. 1.2 - 1 digit isco FE + 3 digit isco FE
+*B3. B2 with 3-digit in place of 1-digit ISCO occupation FE
 eststo HHI_3dig_hours3:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -123,7 +145,7 @@ eststo HHI_3dig_hours3:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native
 	quietly estadd local fixedworker " ", replace
 	
 
-*B4. 1.3 + industry fixed effect
+*B4. B3 + 4-digit industry x year FE
 eststo HHI_3dig_hours4:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind "X", replace
@@ -134,7 +156,7 @@ eststo HHI_3dig_hours4:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native
 	quietly estadd local fixedworker " ", replace
 	 
 
-*B5. 1.4 + worker FE
+*B5. B4 + worker FE
 eststo HHI_3dig_hours5:reghdfe lreg_hours_month c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind "X", replace
@@ -146,9 +168,11 @@ eststo HHI_3dig_hours5:reghdfe lreg_hours_month c.nHHI_3dig lfsize , noconstant 
 	
 	
 
-** PANEL C: real hourly wage
+*=========================================================================
+** PANEL C: log real hourly wage
+*=========================================================================
 
-*C0. dep var: real hourly wagee; HHI worker controls no firm size
+*C0. baseline: worker controls, no firm size
 eststo HHI_3dig_hourlywage0: reghdfe lreal_hrl_wage c.nHHI_3dig female native , noconstant absorb(year fNUTS2 age#educ) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -159,7 +183,7 @@ eststo HHI_3dig_hourlywage0: reghdfe lreal_hrl_wage c.nHHI_3dig female native , 
 	quietly estadd local fixedworker " ", replace
 
 
-*C1. 1 + firm size
+*C1. C0 + firm size
 eststo HHI_3dig_hourlywage1:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -170,7 +194,7 @@ eststo HHI_3dig_hourlywage1:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female nat
 	quietly estadd local fixedworker " ", replace
 
 
-*C2. 1.1 + 1 digit isco FE
+*C2. C1 + 1-digit ISCO occupation FE
 eststo HHI_3dig_hourlywage2:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ occup1_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -182,7 +206,7 @@ eststo HHI_3dig_hourlywage2:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female nat
 	 
 
 	
-*C3. 1.2 - 1 digit isco FE + 3 digit isco FE
+*C3. C2 with 3-digit in place of 1-digit ISCO occupation FE
 eststo HHI_3dig_hourlywage3:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native , noconstant absorb(year fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind " ", replace
@@ -193,7 +217,7 @@ eststo HHI_3dig_hourlywage3:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female nat
 	quietly estadd local fixedworker " ", replace
 	 
 
-*C4. 1.3 + industry fixed effect
+*C4. C3 + 4-digit industry x year FE
 eststo HHI_3dig_hourlywage4:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female native , noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind "X", replace
@@ -204,7 +228,7 @@ eststo HHI_3dig_hourlywage4:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize female nat
 	quietly estadd local fixedworker " ", replace
 	 
 
-*C5. 1.4 + worker FE
+*C5. C4 + worker FE
 eststo HHI_3dig_hourlywage5:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize , noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedind "X", replace
@@ -220,7 +244,7 @@ eststo HHI_3dig_hourlywage5:reghdfe lreal_hrl_wage c.nHHI_3dig lfsize , noconsta
 			
 		
 
-/// Table Label, File Name and Title
+* Each panel is exported as a standalone .tex fragment
 
 local tabtitle "Wage regression: HHI at 3 digit occupation."
 local tablabel "table_04_panel_a_monthly_earnings"

@@ -1,8 +1,19 @@
+* ---------------------------------------------------------------------------
+* anova_HHI_industry.do -- Table A2
+*
+* How much of the cross-firm variation in each specialization measure is
+* accounted for by industry alone, and by industry interacted with year. Each
+* cell of the table is the R-squared of a regression of one measure on one set
+* of fixed effects.
+*   out: $path_out_tab/table_a02_anova_fixed_effects.tex
+* ---------------------------------------------------------------------------
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
 * ---------------------------------------------------------------------------
-* Build firm-year Normalized Task Concentration measure (see task_analysis.do)
+* Rebuild the firm-year task concentration measure. It is constructed exactly
+* as in build_3_label_and_merge.do, but recomputed here because the min-max
+* normalization has to be taken over the sample used in this table.
 * ---------------------------------------------------------------------------
 preserve
 	cap drop _merge
@@ -57,7 +68,7 @@ label var noccs_3dig "N. of occs. 3-dig"
 label var nHHI_3dig "HHI 3-digit"
 label var nHHI_1dig "Normalized HHI 1-dig."
 
-* Store the number of observations with comma formatting
+* Number of firm-year observations behind the table, comma-formatted
 local num = _N
 local num_formatted : di %12.0fc `num'
 local num_formatted = strtrim("`num_formatted'")
@@ -161,7 +172,8 @@ matrix R2[7,4] = round(e(r2), 0.01)
 * Export the matrix to LaTeX format
 local tablabel "table_a02_anova_fixed_effects"
 
-* Write the LaTeX table manually with proper formatting
+* Rows are written out by hand so they can be ordered as in the paper,
+* which differs from the order in which they were estimated above.
 file open myfile using "$path_out_tab/`tablabel'.tex", write replace
 
 * Write the LaTeX table header
@@ -203,7 +215,7 @@ local val3 = string(R2[3,3], "%9.2f")
 local val4 = string(R2[3,4], "%9.2f")
 file write myfile "Share largest 1-dig occupation & `val1' & `val2' & `val3' & `val4' \\" _n
 
-* Row 7: Normalized task concentration
+* Row labeled Task concentration (matrix row 7: ntaskcon)
 local val1 = string(R2[7,1], "%9.2f")
 local val2 = string(R2[7,2], "%9.2f")
 local val3 = string(R2[7,3], "%9.2f")

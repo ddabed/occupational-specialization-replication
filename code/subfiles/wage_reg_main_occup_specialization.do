@@ -1,9 +1,22 @@
+*-------------------------------------------------------------------------
+* wage_reg_main_occup_specialization.do -- Table A4, Panels A, B and C
+*
+* Replaces the HHI with a simpler measure of specialization: the employment
+* share of the firm's largest occupation, at 4-, 3- and 1-digit detail. The
+* two specifications per measure are Table 4 columns 5 and 6.
+*
+* Each share is copied into a common variable name, `share', so that all six
+* columns report on a single table row.
+*   out: $path_out_tab/table_a04_panel_a_largest_occupation_monthly_earnings.tex
+*        $path_out_tab/table_a04_panel_b_largest_occupation_monthly_hours.tex
+*        $path_out_tab/table_a04_panel_c_largest_occupation_hourly_wage.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
-*sample 5
 
 rename share_1dig_max s1_max
 rename share_3dig_max s3_max
@@ -45,9 +58,8 @@ label var s4_max "Share of the largest 4-digit occ."
 	
 
 
-/// Table Output: Panel A (Monthly earnings)
+* Table output: Panel A (log monthly earnings)
 
-*local tabtitle "Wage regression: HHI at 1-digit, 4-digit, and task concentration."
 local tablabel "table_a04_panel_a_largest_occupation_monthly_earnings"
 
 esttab s4_max_lreal_wage4 s4_max_lreal_wage5 s3_max_lreal_wage4 s3_max_lreal_wage5 s1_max_lreal_wage4 s1_max_lreal_wage5 using $path_out_tab/`tablabel'.tex, ///
@@ -71,7 +83,7 @@ esttab s4_max_lreal_wage4 s4_max_lreal_wage5 s3_max_lreal_wage4 s3_max_lreal_wag
 	replace
 
 
-/// Table Output: Panel B (Monthly hours)
+* Table output: Panel B (log total monthly hours)
 
 local tablabel "table_a04_panel_b_largest_occupation_monthly_hours"
 
@@ -95,7 +107,7 @@ esttab s4_max_lreg_hours_month4 s4_max_lreg_hours_month5 s3_max_lreg_hours_month
 	replace
 
 
-/// Table Output: Panel C (Hourly wage)
+* Table output: Panel C (log hourly wage)
 
 local tablabel "table_a04_panel_c_largest_occupation_hourly_wage"
 

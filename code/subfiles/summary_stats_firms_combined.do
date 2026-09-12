@@ -1,9 +1,18 @@
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 
-* Firm-level summary statistics - Combined table
-* Three columns: (1) All firms, (2) Estimation sample (firm size filter),
-* (3) Value-added sample (firms with non-missing value added)
+*===============================================================================
+* summary_stats_firms_combined.do -- Table 1, Panel B
+*
+* Firm-level means for the same three samples as Panel A, side by side:
+*   (1) All firms       -- the panel before the firm size filter
+*   (2) Estimation      -- the main panel (minimum firm size 10)
+*   (3) Value added     -- the estimation sample restricted to firms with
+*                          non-missing value added
+* Each panel is collapsed to firm-year level first, so that a firm contributes
+* one observation per year rather than one per worker.
+*   out: $path_out_tab/table_01_panel_b_summary_stats_firms.tex
+*===============================================================================
 
 *===============================================================================
 * Column 1: All firms (before firm size filter)

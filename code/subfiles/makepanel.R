@@ -1,12 +1,27 @@
-#-------------------------------#
-# Install required packages if missing
-#-------------------------------#
-#install.packages(
-#  c("readxl", "haven", "fixest", "xtable", "docstring", "dplyr", "data.table"),
-#  type = "source",
-#  repos = "https://cloud.r-project.org"
-#)
+#-------------------------------------------------------------------------
+# makepanel.R -- step 2 of the data build
+#
+# Builds the worker-year analysis panels from the renamed Quadros de Pessoal
+# files written by build_1_rename_raw_files.do. For each year it cleans the
+# worker file, merges in firm characteristics, computes the firm-level
+# specialization measures (headcount and hours-weighted HHI and occupation
+# shares at 1-, 3- and 4-digit ISCO), and deflates the wage variables.
+#
+# The whole process is run three times, once per minimum firm size:
+#   min_size = 10  data/clean/panel/2010-2019-regression.dta          (main sample)
+#   min_size = 5   data/clean/panel/2010-2019-regression-5ormore.dta
+#   min_size = 1   data/clean/panel/allfirms/2010-2019-regression-allfirms.dta
+#
+# It also writes the per-year industry-composition CSVs that Table A1 reads
+# back, and a CSV logging how many observations each filtering step removes.
+#
+# Normally launched by 2_build_data.do, which passes the package root as the
+# only command-line argument. See the block below to run it by hand.
+#-------------------------------------------------------------------------
 
+# Required packages. To install them:
+#   install.packages(c("haven", "readxl", "fixest", "xtable",
+#                      "docstring", "dplyr", "data.table"))
 .required <- c("haven", "readxl", "fixest", "xtable",
                "docstring", "dplyr", "data.table")
 .missing <- .required[!vapply(.required, requireNamespace, logical(1),
@@ -20,7 +35,7 @@ if (length(.missing)) {
 invisible(lapply(.required, library, character.only = TRUE))
 
 #-------------------------------#
-# Set working directory here
+# Package root
 #-------------------------------#
 
 # 2_build_data.do launches this script and passes the package root as the
@@ -67,6 +82,8 @@ dir.create(path_out_log_ind,                       showWarnings = FALSE, recursi
 # Helper functions
 #-------------------------------#
 
+# Hours-weighted specialization: each occupation's share of the firm-year is
+# its share of total hours worked, and wHHI is the sum of squared shares.
 compute_firm_specialization_weighted <- function(dt, colName){
   dt <- dt[!is.na(get(colName))]
 
@@ -79,6 +96,9 @@ compute_firm_specialization_weighted <- function(dt, colName){
   return(agg_firm_occups)
 }
 
+# Headcount specialization: each occupation's share of the firm-year is its
+# share of employees, and HHI is the sum of squared shares. This is the measure
+# the paper's main results use.
 compute_firm_specialization <- function(dt, colName){
   dt <- dt[!is.na(get(colName))]
 
@@ -90,6 +110,8 @@ compute_firm_specialization <- function(dt, colName){
   return(agg_firm_occups)
 }
 
+# Record the industry composition of the sample at one point in the pipeline.
+# ind_composition_stages.do reads these CSVs back to build Table A1.
 save_ind_composition <- function(dt, stage_label, year) {
   comp <- dt[, .(N = .N), by = fEAC_1let_rev3]
   comp[, pct := round(100 * N / sum(N), 2)]
@@ -98,7 +120,8 @@ save_ind_composition <- function(dt, stage_label, year) {
   fwrite(comp, file.path(path_out_log_ind, paste0(stage_label, "_", year, ".csv")))
 }
 
-# helper: safely turn a vector into year integers
+# Hiring and promotion dates come through with different types depending on the
+# delivery year, so accept a date, a numeric date, or a string and return a year.
 extract_year <- function(v) {
   if (inherits(v, "Date") || inherits(v, "POSIXt")) return(as.integer(format(v, "%Y")))
   if (is.numeric(v)) return(as.integer(format(as.Date(v, origin = "1970-01-01"), "%Y")))
@@ -175,7 +198,8 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
   obs_zero_hours <- sum(dt$reg_hours_month == 0)
   print(paste("Observations lost this year with zero hours:", obs_zero_hours))
 
-  # Characterize firms with zero hours (only on designated pass)
+  # Characterize the firms with zero-hours records by industry and size band,
+  # for the data appendix. Written once only, on the min_size = 10 pass.
   if (log_zero_hours && obs_zero_hours > 0) {
     firm_size_full <- dt[, .(full_size = .N), by = fnumber_FIC]
     dt_zero_hours  <- dt[reg_hours_month == 0, .(fnumber_FIC)]
@@ -208,11 +232,13 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
   obs_missing_educ <- before_n - after_n
   print(paste("Observations lost this year without education:", obs_missing_educ))
 
-  # New variable educ to summarize schooling
+  # Collapse the schooling variable into three levels:
+  #   1 less than high school, 2 high school, 3 college
   dt[, educ := school_1dig][school_1dig == 2, educ := 1][school_1dig == 3 | school_1dig == 4, educ := 2]
   dt[school_1dig == 5 | school_1dig == 6 | school_1dig == 7 | school_1dig == 8 | school_1dig == 0, educ := 3]
 
-  # Remove too young or too old workers and ageless
+  # Restrict to working age: age is a banded string in the raw data, so the
+  # top and bottom bands and the blank are dropped before it is made numeric
   dt <- dt[!(age %in% c(">=68", "<=17", ""))]
 
   # Make age numerical
@@ -232,7 +258,8 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
 
   dt[, lreal_hrl_wage := log(real_hrl_wage)]
 
-  # Keep only first MAX wage value per worker for the year
+  # One row per worker-year: where a worker appears in several jobs, keep the
+  # one with the highest nominal wage (the first, if there are ties)
   dt <- dt[dt[, .I[which.max(nominal_wage)], by = 'w_numer']$V1]
 
   # Get year of promotion data (robust to missing/various types)
@@ -343,7 +370,7 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
   dt[, share_3dig_max := max(share_3dig)[1], by = c("fnumber_FIC", "year")]
   dt[, share_4dig_max := max(share_4dig)[1], by = c("fnumber_FIC", "year")]
 
-  # Share of workers that have some college
+  # Share of the firm's workers with a college degree
   dt[, share_college := as.double(0), by = c('fnumber_FIC', 'year')]
   dt[educ==3, share_college := .N, by = c('fnumber_FIC', 'year')]
   dt[, share_college := max(share_college, na.rm=TRUE), by = c('fnumber_FIC', 'year')]
@@ -360,7 +387,8 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
                                          breaks = seq(0,100,1), right = TRUE,
                                          include.lowest = TRUE), by = occup1_10]
 
-  # Homogenize (tie-break) per firm (max quintile)
+  # A worker's occupation share can differ across their firm-years, so take the
+  # highest bin per firm-occupation to give each one a single value
   dt[, workerQuintile_1dig   := max(workerQuintile_1dig),   by = c("occup1_10", "fnumber_FIC")]
   dt[, workerDecile_1dig     := max(workerDecile_1dig),     by = c("occup1_10", "fnumber_FIC")]
   dt[, workerPercentile_1dig := max(workerPercentile_1dig), by = c("occup1_10", "fnumber_FIC")]
@@ -386,7 +414,8 @@ prep_data_for_reg <- function(year, min_size, cpi_table, log_zero_hours = FALSE)
   dt[, young := '< 29'][age > 28, young := '>= 29']
   dt$young <- as.factor(dt$young)
 
-  # Keep only first MAX wage value per worker for the year
+  # Enforce one row per worker-year again, now that the merges above may have
+  # reintroduced duplicates; this time on the real hourly wage
   dt <- dt[dt[, .I[which.max(total_realhrem)], by = 'w_numer']$V1]
 
   obs_full_sample <- dt[,.N]
@@ -483,7 +512,7 @@ percentiles <- quantile(dt_10$lreal_hrl_wage, probs = c(0.01, 0.99), na.rm = TRU
 dt_10[lreal_hrl_wage < percentiles[1], lreal_hrl_wage := percentiles[1]]
 dt_10[lreal_hrl_wage > percentiles[2], lreal_hrl_wage := percentiles[2]]
 
-# Save main dataset (create the output folder if it does not exist)
+# Save main dataset (the output folders were created at the top of the script)
 write_dta(dt_10, file.path(path_clean_panel, "2010-2019-regression.dta"))
 
 # Save log
@@ -492,7 +521,7 @@ fwrite(log_dt_10,
        file.path(path_out_log, paste0("log_makepanel_10_", format(Sys.time(), "%Y%m%d"), ".csv")),
        row.names = FALSE)
 
-rm(dt_10, samp)
+rm(dt_10)
 gc()
 
 #============================================================

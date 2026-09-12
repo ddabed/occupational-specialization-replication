@@ -1,3 +1,12 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig_interacted.do -- Table A8
+*
+* The occupation heterogeneity behind Figure 2, Panel A, in table form: the
+* hourly wage regression with the 3-digit HHI interacted with the worker's
+* 1-digit occupation, under three sets of fixed effects.
+*   out: $path_out_tab/table_a08_heterogeneity_occupation.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 
@@ -5,7 +14,7 @@ use $path_clean_panel/2010-2019-regression.dta, clear
 
 label var nHHI_3dig "HHI 3-dig"
 
-*1.2. 1.1 + industry fixed effect
+*1. 4-digit industry x year FE
 
 
 eststo HHI_3dig_2:reghdfe lreal_hrl_wage c.nHHI_3dig#i.occup1_10 female native lfsize, noconstant absorb(year#industry fNUTS2 age#educ occup1_10) cluster($clustervar)
@@ -20,7 +29,7 @@ eststo HHI_3dig_2:reghdfe lreal_hrl_wage c.nHHI_3dig#i.occup1_10 female native l
 	 
 
 	
-*1.4. 1.2 + 3 digit isco FE
+*2. + 3-digit ISCO occupation FE
 
 
 eststo HHI_3dig_4:reghdfe lreal_hrl_wage c.nHHI_3dig#i.occup1_10 female native lfsize, noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
@@ -34,7 +43,7 @@ eststo HHI_3dig_4:reghdfe lreal_hrl_wage c.nHHI_3dig#i.occup1_10 female native l
 	quietly estadd local fixedworker " ", replace
 	 
 
-*1.5. 1.4 + worker FE
+*3. + worker FE
 
 eststo HHI_3dig_5:reghdfe lreal_hrl_wage c.nHHI_3dig#i.occup1_10 lfsize, noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
@@ -47,7 +56,7 @@ eststo HHI_3dig_5:reghdfe lreal_hrl_wage c.nHHI_3dig#i.occup1_10 lfsize, noconst
 	quietly estadd local fixedworker "X", replace
 	
 	
-/// Table Label, File Name and Title
+* Table file name
 
 local tabtitle "Wage regression: Norm. HHI at 3 digit occupation interacted with occupation."
 local tablabel "table_a08_heterogeneity_occupation"

@@ -1,21 +1,30 @@
-eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
+*-------------------------------------------------------------------------
+* occ1_interaction_wage_rank_withbubbles_hoursweighted.do -- Figure 2, Panel A
+*
+* Heterogeneity of the specialization effect across 1-digit occupations. The
+* hourly wage regression is run with the HHI interacted with occupation, and
+* each occupation's coefficient is plotted against its mean log hourly wage.
+* Marker size is proportional to the occupation's share of total hours worked;
+* the fitted line is weighted the same way.
+*   out: $path_out_fig/figure_02_panel_a_heterogeneity_occupation.pdf
+*        $path_clean_int/occhetplots_coef.dta  (the plotted coefficients)
+*-------------------------------------------------------------------------
 
+eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
-
-///// Regression
-
-
-*C. Hourly wage regression
-
+* Hourly wage regression, HHI interacted with 1-digit occupation
 eststo HHI_1dig_hourlywage:reghdfe lreal_hrl_wage c.nHHI_3dig#i.occup1_10 lfsize, noconstant absorb(year#industry age#educ occup3_10 w_numer) cluster($clustervar)
 matrix b = e(b)
 matrix V = e(V)
 matrix list b
 matrix list V
 
-// Calculate confidence intervals
+// Confidence intervals for the eight interaction coefficients. Occupation 6
+// (skilled agricultural workers) is absent from the estimation sample, so the
+// loop index shifts by one from i = 6 onwards to line the coefficients up with
+// the ISCO codes.
 local n = _N
 local level = 95
 local z = invttail(`n' - 1, (100 - `level') / 200)
@@ -76,7 +85,8 @@ bysort occup1_10: gegen occ1_mean_hrly_wage = mean(lreal_hrl_wage)
 gcollapse (first) occ1_mean_hrly_wage interaction_b interaction_ci_lb interaction_ci_ub (count) number = w_numer (sum) reg_hours_month, by(occup1_10) fast
 
 
-// Save collapsed panel to work locally later	
+// Keep the collapsed coefficients, so the figure can be redrawn without
+// re-estimating the regression.
 compress
 save $path_clean_int/occhetplots_coef, replace
 
@@ -95,7 +105,8 @@ gen occweight = number / totemp
 	assert test > 0.99999 & test < 1.00001
 	drop test 
 	
-// Avoid label overprinting	
+// Clock positions for the occupation labels, set by hand so that they do
+// not overprint each other or the markers.
 generate pos = 3
 	replace pos = 9 if occup1 == 1 // managers
 	replace pos = 3 if occup1 == 9 // elementary occ

@@ -1,8 +1,17 @@
+*-------------------------------------------------------------------------
+* wage_reg_share_transparency.do -- Table A10
+*
+* Tests whether the specialization effect differs for workers inside the
+* firm's largest 3-digit occupation and workers outside it, by interacting
+* the share of the largest occupation with an indicator for belonging to it.
+*   out: $path_out_tab/table_a10_pay_transparency.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
-* ---------- 3-digit block ----------
+* ---------- largest / smallest 3-digit occupation within the firm-year ----------
 bys fnumber_FIC year: egen maxshare = max(share_3dig)
 bys fnumber_FIC year: egen minshare = min(share_3dig)
 
@@ -15,7 +24,7 @@ label var maxshare_dummy "Largest 3-dig occ."
 label var minshare_dummy "Smallest 3-dig occ."
 label var maxshare        "Share largest 3-dig. occ."
 
-* Pay Transparency (3-digit)
+* Without worker FE, then with worker FE
 eststo reg1: reghdfe lreal_hrl_wage c.maxshare##maxshare_dummy female native lfsize, ///
     noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
 			quietly estadd local fixedfsize "X", replace

@@ -1,9 +1,18 @@
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 
-* Worker-level summary statistics - Combined table
-* Three columns: (1) All firms, (2) Estimation sample (firm size filter),
-* (3) Value-added sample (firms with non-missing value added)
+*===============================================================================
+* summary_stats_workers_combined.do -- Table 1, Panel A
+*
+* Worker-level means for the three samples used in the paper, side by side:
+*   (1) All firms       -- the panel before the firm size filter
+*   (2) Estimation      -- the main panel (minimum firm size 10)
+*   (3) Value added     -- the estimation sample restricted to firms with
+*                          non-missing value added
+* The same block of code is repeated once per sample, since each is a
+* different dataset and esttab needs one stored estimate per column.
+*   out: $path_out_tab/table_01_panel_a_summary_stats_workers.tex
+*===============================================================================
 
 *===============================================================================
 * Column 1: All firms (before firm size filter)
@@ -151,6 +160,8 @@ local tablabel "table_01_panel_a_summary_stats_workers"
 
 preserve
 
+	* Indent the education and occupation dummies under their group heading.
+	* Done inside preserve/restore so the relabelling is not carried further.
 	foreach v of varlist dum_edu* {
 		label variable `v' `"- `: variable label `v''"'
 	}

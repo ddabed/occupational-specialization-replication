@@ -1,7 +1,17 @@
 *---------------------------------------------------------------------------------
-* Local projection models considering the impact of firm specialization exposure
-* on relative earnings, wage, and hours growth;
-* as well as on relative firm and occupation switching, and switching to non-employment.
+* local-projections.do -- estimates the local projection models
+*
+* Traces the effect of exposure to firm occupational specialization on relative
+* earnings, hourly wage and hours growth, and on relative firm switching,
+* occupation switching and switching to non-employment, over horizons k = 1..5.
+*
+* Produces no paper output directly. It writes the two estimate datasets that
+* Figures 5 and A2 are drawn from:
+*   out: $path_clean_int/lp_est_exp1.dta      baseline and occupation-stayer estimates
+*        $path_clean_int/lp_est_exp1_akm.dta  estimates controlling for the initial
+*                                             AKM firm fixed effect
+*
+* Reads AKM_full.dta, so AKM_firm_HHI.do must have run first.
 *---------------------------------------------------------------------------------
 
 global max = 5 // how many years since initial exposure
@@ -32,7 +42,7 @@ gen Loccup1_10=L.occup1_10
 gen Loccup3_10=l.occup3_10
 gen Lindustry=L.industry 
 gen LnHHI_3dig = L.nHHI_3dig
-gen LfNUTS2 = L.fNUTS2				// Added 19.02 -- ERASE COMMENT AT THE VERY END
+gen LfNUTS2 = L.fNUTS2				// region of the firm in the exposure period
 
 foreach var in real_wage real_hrl_wage reg_hours_month {
 	gen ln`var' = ln(`var')
@@ -50,10 +60,10 @@ label var firmswitch "=1 if worker switched firm in this year"
 
 gen occswitch = 0 if occup3_10==L.occup3_10 & w_numer==L.w_numer & fnumber_FIC!=. & L.fnumber_FIC!=.
 replace occswitch = 1 if occup3_10!=L.occup3_10  & w_numer==L.w_numer & fnumber_FIC!=. & L.fnumber_FIC!=. 
-replace occswitch = . if L.occup3_10==. | occup3_10==. // added
+replace occswitch = . if L.occup3_10==. | occup3_10==. // undefined if either occupation is missing
 label var occswitch "=1 if worker switched 3d occupation in this year" 
 
-sum *switch // % of workers that switch firm or occupation in any one year 
+sum *switch // share of workers switching firm or occupation in any one year
 
 // lagged indicators for firm and occ switch
 foreach var in firmswitch occswitch {
@@ -100,7 +110,11 @@ forval k=1/$max {
 	forval k=1/$max {
 		gen neswitch_`k' = 1 if fnumber_FIC!=. & F`k'.fnumber_FIC==. & w_numer==F`k'.w_numer
 		replace neswitch_`k' = 0 if fnumber_FIC!=. & F`k'.fnumber_FIC!=. & w_numer!=. &  neswitch_`k'==.
-		gen rneswitch_`k' = neswitch_`k' - Lneswitch // note: identical to neswitch_`k' in the regression sample -- this is bc the Lneswitch variable is always defined over a year when LHHI_1dig by definition is not observed
+
+		// Within the regression sample this is identical to neswitch_`k':
+		// Lneswitch is only defined for a year in which the lagged HHI
+		// exposure measure is missing by construction.
+		gen rneswitch_`k' = neswitch_`k' - Lneswitch
 	}
 
 	sum *neswitch_1 if LnHHI_3dig!=.

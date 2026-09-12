@@ -3,17 +3,11 @@
 *   in : $path_raw_onet/Work Context.txt   (O*NET 21.0, 2016)
 *   out: $path_clean_onet/onet16_wkcontext[_soc].dta
 
-
-
-* This do-file builds a dataset of the O*Net 2016 (21.0) WORK CONTEXT Components
-***** THIS PART HAS BEEN COMMENTED OUT FOR FISS-FIRMS PROJECT (BUT KEEPING IT IN CASE IT ENDS UP BEING RELEVANT)
-	* It aggregates them to 2010 Census codes by doing a weighted average of all 
-	* the O*Net occ's that fall into the same 2010 Census code based on OES 
-	* employment data, and then aggregates to occ1990dd codes again doing a 
-	* weighted average of all the 2010 codes that fall into the same occ1990dd
-	* code using OES employment data
-
-
+* The module is reshaped so that one row is one O*NET-SOC occupation, then
+* collapsed to the 6-digit SOC level. Only two of these dimensions are used
+* downstream (degree of automation and importance of repeating the same tasks,
+* which form the routine composite in onet_tasks.do); the rest are built and
+* labelled here for completeness.
 *************************************************************************
 ******************************** ONET 2016 ******************************
 

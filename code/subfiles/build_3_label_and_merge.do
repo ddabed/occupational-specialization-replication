@@ -107,7 +107,11 @@ program define label_regression_dataset
 	
 	
 	**Normalized Task Concentration measure
-	
+	** Task diversity is the average, across the four O*Net task dimensions, of
+	** the within-firm-year standard deviation of that dimension's score. It is
+	** min-max normalized to [0,1] and flipped, so that task concentration is 1
+	** for a firm whose workers all do identical tasks.
+
 	merge m:1 occup4_10 using $path_raw/scores_isco4dig
 		drop if _m == 2
 
@@ -189,11 +193,11 @@ save "$path_clean_panel/allfirms/2010-2019-regression-allfirms.dta", replace
 			rename sv512701 total_net_assets
 			rename sv516101 total_liab_equity
 
-			rename sd000005 fixed_assets //derived variable (tangibles and non intagibles)
+			rename sd000005 fixed_assets // SCIE-derived: tangible plus intangible assets
 				
-			// Drop entrepreneurs
+			// Drop unincorporated businesses, which are not comparable to firms
 			drop if cae == "19_205"
-			drop if efjr0=="eni" // entrepreneur/single person "company"
+			drop if efjr0=="eni" // empresario em nome individual (sole proprietor)
 
 			gen nace_2d=substr(cae_cod, 1,2)
 				order nace_2d, a(cae_cod)
@@ -245,7 +249,10 @@ save "$path_clean_panel/allfirms/2010-2019-regression-allfirms.dta", replace
 		save $path_clean_int/va_tfp_data/SCIE_2010_2019, replace
 
 
-	** Estimate Total Factor Productivity using Cobb-Douglas and wage bill as labor input
+	** Estimate Total Factor Productivity: Cobb-Douglas value-added production
+	** function estimated with Wooldridge's (2009) method, using the wage bill as
+	** the free (labour) input, fixed assets as the state variable, and
+	** intermediates as the proxy.
 		cap drop residuals
 		cap drop l_employees
 		gen l_employees = ln(employees) if employees > 0 & !missing(employees)

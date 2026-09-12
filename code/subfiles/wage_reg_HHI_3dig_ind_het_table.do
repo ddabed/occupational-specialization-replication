@@ -1,3 +1,12 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig_ind_het_table.do -- Table A9
+*
+* The industry heterogeneity behind Figure 2, Panel B, in table form: the
+* hourly wage regression with the 3-digit HHI interacted with the firm's
+* 1-digit (NACE letter) industry, under three sets of fixed effects.
+*   out: $path_out_tab/table_a09_heterogeneity_industry.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 
@@ -31,7 +40,7 @@ encode fEAC_1let_rev3, gen(ind_1dig)
 label var ind_1dig "1-let. industry"
 
 
-*1.2. 1.1 + industry fixed effect
+*1. 4-digit industry x year FE
 
 
 eststo HHI_1dig_2:reghdfe lreal_hrl_wage c.nHHI_3dig#i.ind_1dig female native lfsize, noconstant absorb(year#industry fNUTS2 age#educ occup1_10) cluster($clustervar)
@@ -46,7 +55,7 @@ eststo HHI_1dig_2:reghdfe lreal_hrl_wage c.nHHI_3dig#i.ind_1dig female native lf
 	 
 
 	
-*1.4. 1.2 + 3 digit isco FE
+*2. + 3-digit ISCO occupation FE
 
 
 eststo HHI_1dig_4:reghdfe lreal_hrl_wage c.nHHI_3dig#i.ind_1dig female native lfsize, noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
@@ -61,7 +70,7 @@ eststo HHI_1dig_4:reghdfe lreal_hrl_wage c.nHHI_3dig#i.ind_1dig female native lf
 	 
 	 
 
-*1.5. 1.4 + worker FE
+*3. + worker FE
 
 eststo HHI_1dig_5:reghdfe lreal_hrl_wage c.nHHI_3dig#i.ind_1dig lfsize, noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 	quietly estadd local fixedfsize "X", replace
@@ -73,7 +82,7 @@ eststo HHI_1dig_5:reghdfe lreal_hrl_wage c.nHHI_3dig#i.ind_1dig lfsize, noconsta
 	quietly estadd local fixed3dig "X", replace
 	quietly estadd local fixedworker "X", replace
 	 
-/// Table Label, File Name and Title
+* Table file name
 
 local tabtitle "Wage regression: HHI at 3 digit occupation interacted with industry."
 local tablabel "table_a09_heterogeneity_industry"

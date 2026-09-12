@@ -1,3 +1,12 @@
+*-------------------------------------------------------------------------
+* HHI_distribution_firmsize.do -- Table A3
+*
+* Distribution of the 3-digit HHI within deciles of average firm size, with the
+* standard deviation after residualizing on industry x year fixed effects.
+* Firms are assigned to a size decile once, on their average employment over
+* the whole period, so a firm does not move between columns across years.
+*   out: $path_out_tab/table_a03_specialization_by_firm_size.tex
+*-------------------------------------------------------------------------
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
@@ -57,12 +66,12 @@ forvalues i = 1/10{
 
 
 		
-/// Table Label, File Name and Title
+* Table file name
 
 local tabtitle "Distribution of specialization over firm-year observations"
 local tablabel "table_a03_specialization_by_firm_size"
 
-** without cells HHI-1 & HHI-3dig, it produces 4 columns; with "&" it gives HH1-1d /HH1-3dig, and by changing coll names it just gives HHI 1-dig
+* One estimate per size decile, each contributing a single column.
 esttab HHI_n3digtab_*  using $path_out_tab/`tablabel'.tex, ///
 	cells("nHHI_3dig(fmt(2) label(nHH1_3dig))")  ///
 	stats(HHI_indyear_sd, label("Sd. year $\times$ industry")) ///

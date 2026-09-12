@@ -84,7 +84,7 @@ local wage_reg_HHI_3dig_ind_het_tab 1
 local wage_reg_share_transparency 1
 *figure A1 -- produced together with figure 4 (AKM_firm_HHI_VA_TFP.do)
 *figure A2
-local proj_plots_reviewers 1
+local proj_plots_robustness 1
 
 *=========================================================================
 * SECTION 1: Build shared intermediate datasets
@@ -97,11 +97,11 @@ local proj_plots_reviewers 1
 *=========================================================================
 
 * AKM firm fixed effects (needed by figures 4, A1, and 5)
-if (`AKM_firm_HHI' == 1 | `wage_growth_local_projections' == 1 | `proj_plots_reviewers' == 1) {
+if (`AKM_firm_HHI' == 1 | `wage_growth_local_projections' == 1 | `proj_plots_robustness' == 1) {
    do "$path_do_sub/AKM_firm_HHI.do"        // estimates AKM firm/worker FE -> AKM_full.dta
 }
 * Local projection estimates (needed by figures 5 and A2)
-if (`wage_growth_local_projections' == 1 | `proj_plots_reviewers' == 1) {
+if (`wage_growth_local_projections' == 1 | `proj_plots_robustness' == 1) {
    do "$path_do_sub/local-projections.do"   // -> lp_est_exp1.dta, lp_est_exp1_akm.dta
 }
 
@@ -204,8 +204,8 @@ if (`wage_reg_share_transparency' == 1) {
 }
 *figure A1 -- produced together with figure 4 (see AKM_firm_HHI_VA_TFP.do above)
 *figure A2
-if (`proj_plots_reviewers' == 1) {
-   do "$path_do_sub/local-projections-plots-reviewers.do"
+if (`proj_plots_robustness' == 1) {
+   do "$path_do_sub/local-projections-plots-robustness.do"
 }
 
 cap log close

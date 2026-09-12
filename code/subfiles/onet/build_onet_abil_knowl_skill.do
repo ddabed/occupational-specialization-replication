@@ -3,16 +3,10 @@
 *   in : $path_raw_onet/{Abilities,Knowledge,Skills}.txt  (O*NET 21.0, 2016)
 *   out: $path_clean_onet/onet16_{abil,knowl,skill}[_soc].dta
 
-
-* This do-file builds a dataset of the O*Net 2016 ABILITIES, KNOWLEDGE and
-* SKILLS components. 
-***** THIS PART HAS BEEN COMMENTED OUT FOR FISS-FIRMS PROJECT (BUT KEEPING IT IN CASE IT ENDS UP BEING RELEVANT)
-	* It aggregates them to 2010 Census codes by doing a weighted average of all 
-	* the O*Net occ's that fall into the same 2010 Census code based on OES 
-	* employment data, and then aggregates to occ1990dd codes again doing a 
-	* weighted average of all the 2010 codes that fall into the same occ1990dd
-	* code using OES employment data
-
+* Each module is read from its O*NET text file, reshaped so that one row is one
+* O*NET-SOC occupation, and collapsed to the 6-digit SOC level. The scores are
+* kept at the SOC level: the finer occupational detail O*NET adds beyond SOC is
+* averaged away, since the ISCO crosswalk used downstream is defined on SOC.
 *************************************************************************
 ******************************** ONET 2016 ******************************
 

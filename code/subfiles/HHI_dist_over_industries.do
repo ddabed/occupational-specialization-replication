@@ -1,4 +1,11 @@
-
+*-------------------------------------------------------------------------
+* HHI_dist_over_industries.do -- Table 3
+*
+* Mean, 10th and 90th percentile of firm specialization within each 1-digit
+* (NACE letter) industry, over firm-year observations. Industries are ordered
+* by their average worker wage, from lowest to highest.
+*   out: $path_out_tab/table_03_specialization_across_industries.tex
+*-------------------------------------------------------------------------
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 

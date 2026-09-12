@@ -14,7 +14,9 @@
 
 
 *-------------------------------------------------------------------------
-* Step 1: Clean raw datasets: convert from spss to stata, rename variables in English
+* The file names change across years because the extracts were delivered in
+* several batches; the date suffix is the delivery date. If your copies are
+* named differently, adjust the import spss lines below to match.
 *-------------------------------------------------------------------------
 
 *****************************************************************************
@@ -85,8 +87,9 @@ if `y' == 2019 {
 		rename esc_rem_base basic_rem_class
 		rename esc_rem_ganho total_rem_class
 
-	// Label 3-dig occupations (ESCO classification)
-
+	// Attach ISCO-08 titles to the 3-digit occupation codes.
+	// force makes any non-numeric entry missing rather than stopping the run;
+	// records without a valid occupation are dropped later in the build.
 
 		destring occup3_10, replace force
 

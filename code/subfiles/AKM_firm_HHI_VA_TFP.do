@@ -1,3 +1,21 @@
+*-------------------------------------------------------------------------
+* AKM_firm_HHI_VA_TFP.do -- Figure 4 and Figure A1
+*
+* Relates the AKM firm wage premia estimated in AKM_firm_HHI.do to firm
+* productivity, and decomposes the p10-p90 gap in firm premia across HHI
+* deciles into a productivity (composition) component, a rent-sharing
+* component, and a size/industry component.
+*
+* The same code runs twice, once per productivity measure:
+*   TFP              -> Figure A1, Panels A and B
+*   Value added p.w. -> Figure 4,  Panels A and B
+*
+* Because the interaction term makes the split between the productivity and
+* rent-sharing components depend on the order of the decomposition, each is
+* reported as an upper and a lower bound (the _v1 / _v2 variants below).
+*   out: $path_out_fig/figure_04_panel_{a,b}_*.pdf
+*        $path_out_fig/figure_a01_panel_{a,b}_*.pdf
+*-------------------------------------------------------------------------
 
 use $path_clean_int/AKM_full.dta, clear
 
@@ -8,7 +26,7 @@ drop _m
 
 drop if firm_year_fe == .
 
-*** Compute the SD of AKM Firm FEs
+*** Dispersion of the AKM firm effects, reported in the text
 		* Unweighted
 		sum firm_year_fe, det
 		scalar sd_firm_akm = r(sd)
@@ -26,13 +44,15 @@ drop if firm_year_fe == .
 		
 
 
-* Productivity levels (per worker uses sizeFirm, matching the sales measure)
+* Productivity levels (per worker uses sizeFirm, matching the sales measure).
+* Log value added per worker is formed as lva - lfsize rather than by logging
+* va_per_worker, so that firms with non-positive value added stay missing in
+* the same way they are in lva.
 gen va_per_worker = valueadded_mp / sizeFirm
-*gen lva_pw        = log(va_per_worker)
 gen lva_pw = lva - lfsize
     label var va_per_worker "Value added per worker"
     label var lva_pw        "Log value added per worker"
-* logsales already present in AKM.dta (log sales per worker).
+* logsales (log sales per worker) is already present in AKM_full.dta.
 
 tempfile akmprod
 save `akmprod', replace
@@ -69,7 +89,7 @@ foreach m in  tfp va {
     drop if missing(`prodlevel')
 	display "Dropped `r(N_drop)' observations due to missing `title'"  
 
-    *--- Standardize productivity (employment-weighted), as in AKM_firm_HHI.do
+    *--- Standardize productivity, weighting firms by employment
     sum `prodlevel' [aweight=sizeFirm]
     gen std_prod = (`prodlevel' - r(mean)) / r(sd)
         label var std_prod "`axisname'"
@@ -100,7 +120,9 @@ foreach m in  tfp va {
     gcollapse (mean) firm_year_fe nHHI_3dig std_prod observ resid product ///
         [aweight=sizeFirm], by(HHI_decile) fast
 
-    * Sanity checks (per AKM_firm_HHI.do)
+    * Sanity check: the decomposition still adds up after collapsing. test uses
+    * the collapsed mean of the interaction product, test2 the product of the
+    * collapsed means; test3 scales the latter discrepancy by the firm effect.
     gen test  = firm_year_fe - HHI_coef*nHHI_3dig - prod_coef*std_prod ///
                 - interaction_coef*product - observ - resid
     gen test2 = firm_year_fe - HHI_coef*nHHI_3dig - prod_coef*std_prod ///
@@ -110,7 +132,8 @@ foreach m in  tfp va {
     tab test2
     tab test3
 
-    * Anything not captured by the product-of-averages form goes into resid2
+    * The gap between the two forms is the within-decile covariance between HHI
+    * and productivity, which is reported together with resid under "others".
     gen resid2 = test2
     drop test*
 

@@ -1,3 +1,12 @@
+*-------------------------------------------------------------------------
+* HHI_overall_distribution_emp_weighted.do -- Table 2, Panel B
+*
+* Same statistics as Panel A (HHI_overall_distribution.do), but computed over
+* WORKER-YEAR observations rather than firm-year observations. Because the
+* specialization measures are constant within a firm-year, leaving the panel
+* uncollapsed weights every firm by its employment.
+*   out: $path_out_tab/table_02_panel_b_specialization_distribution_emp_weighted.tex
+*-------------------------------------------------------------------------
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
@@ -199,9 +208,6 @@ local main_occ_4_res_1_sd = r(sd)
 summarize share_4dig_max_resid_2
 local main_occ_4_res_2_sd = r(sd)
 
-*matrix F = (`HHI_res_0_sd', `HHI_3_res_0_sd')
-
-
 * Summary table
 
 eststo clear
@@ -258,16 +264,15 @@ estadd scalar HHI_res_1_sd = `main_occ_4_res_1_sd'
 estadd scalar HHI_res_2_sd = `main_occ_4_res_2_sd'
 eststo share_4dig_max_tab
 
-* 3d, Share 3d, task concentration  Ana
-*Appendix version: HHI 1d, Share 1d, HHI 4d, Share 4d Ana
-
-
-*Main text table
+* The main-text table reports the 3-digit HHI, the 3-digit main-occupation
+* share, and task concentration. The 1-digit and 4-digit estimates are stored
+* above as well, so the appendix version can be assembled from the same run.
 
 local tabtitle "Distribution of specialization over firm-year observations"
 local tablabel "table_02_panel_b_specialization_distribution_emp_weighted"
 
-** without cells HHI-1 & HHI-3dig, it produces 4 columns; with "&" it gives HH1-1d /HH1-3dig, and by changing coll names it just gives HHI 1-dig
+* The "&" between the cells() entries stacks the three measures into a single
+* row block, so each stored estimate contributes one column rather than four.
 esttab HHI_3digtab share_3dig_max_tab ntaskcon_tab  using $path_out_tab/`tablabel'.tex, ///
 	cells("nHHI_3dig(fmt(2) label(nHH1_3dig))&share_3dig_max(fmt(2) label('Main occ. share 3-dig'))&ntaskcon(fmt(2) label('Task concentration'))")  ///
 	stats(HHI_0_sd HHI_res_0_sd HHI_res_1_sd HHI_res_2_sd, label("Sd. overall" "Sd. within year" "Sd. within industry" "Sd. year $\times$ industry")) ///

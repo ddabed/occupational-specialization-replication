@@ -1,3 +1,16 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig_worker3digoccfe.do -- Table A7, Panels A, B and C
+*
+* Robustness of Table 4 to a more demanding set of fixed effects. Columns 1
+* and 2 repeat Table 4 columns 5 and 6; column 3 replaces the worker and
+* 3-digit occupation fixed effects with their interaction, so the coefficient
+* is identified only from workers observed in the same occupation at firms of
+* differing specialization.
+*   out: $path_out_tab/table_a07_panel_a_alt_fixed_effects_monthly_earnings.tex
+*        $path_out_tab/table_a07_panel_b_alt_fixed_effects_monthly_hours.tex
+*        $path_out_tab/table_a07_panel_c_alt_fixed_effects_hourly_wage.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 use $path_clean_panel/2010-2019-regression.dta, clear
 
@@ -50,7 +63,7 @@ label var nHHI_3dig "HHI 3-digit"
 	
 
 
-/// Table Output: Panel A (Monthly earnings)
+* Table output: Panel A (log monthly earnings)
 
 local tabtitle "Wage regression: baseline regression and worker $\times$ occupation FE"
 local tablabel "table_a07_panel_a_alt_fixed_effects_monthly_earnings"
@@ -74,7 +87,7 @@ esttab reg_lreal_wage4 reg_lreal_wage5 reg_lreal_wage6 using $path_out_tab/`tabl
 	replace
 
 
-/// Table Output: Panel B (Monthly hours)
+* Table output: Panel B (log total monthly hours)
 
 local tablabel "table_a07_panel_b_alt_fixed_effects_monthly_hours"
 
@@ -97,7 +110,7 @@ esttab reg_lreg_hours_month4 reg_lreg_hours_month5 reg_lreg_hours_month6 using $
 	replace
 
 
-/// Table Output: Panel C (Hourly wage)
+* Table output: Panel C (log hourly wage)
 
 local tablabel "table_a07_panel_c_alt_fixed_effects_hourly_wage"
 

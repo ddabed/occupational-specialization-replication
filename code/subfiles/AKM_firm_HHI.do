@@ -1,9 +1,19 @@
+*----------------------------------------------------------
+* AKM_firm_HHI.do -- estimates the AKM firm wage premia
+*
+* Fits a two-way fixed effects (AKM) wage regression on the full worker-year
+* panel and collapses the estimated firm effects to the firm level, alongside
+* the specialization measures, firm size and labour productivity.
+*
+* Produces no paper output directly. AKM_full.dta is the shared input to
+* AKM_firm_HHI_VA_TFP.do (Figures 4 and A1) and to local-projections.do
+* (Figures 5 and A2), so this file runs before either of them.
+*   out: $path_clean_int/AKM_full.dta
+*
+* This is one of the two slow stages of 3_run_analysis.do.
+*----------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
-
-
-*----------------------------------------------------------
-* Rerun regression models 
-*----------------------------------------------------------
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
@@ -12,31 +22,9 @@ drop _m
 gen sales_per_worker = fsales/sizeFirm	
 gen logsales = log(sales_per_worker)
 
-/*
-*0. Retain Main region
-tempfile temp
-save `temp'
 
-
-		gcollapse (first) fNUTS2, by(year fnumber_FIC)
-
-		bysort fnumber: egen nryears = count(year)
-		bysort fnumber fNUTS2: egen nryears_reg = count(year)
-		bysort fnumber: egen tag0 = max(nryears_reg)
-
-		gen fNUTS2_main_aux = fNUTS2 if nryears_reg == tag0
-		bysort fnumber: egen fNUTS2_main = max(fNUTS2_main_aux)
-
-		label values fNUTS2_main fNUTS2
-		
-		collapse (first) fNUTS2_main, by(year fnumber_FIC)
-
-	
-merge 1:m fnumber_FIC year using `temp'
-*/
-
-
-*1. AKM regression
+* Worker, firm, age x education, year, occupation and region effects are all
+* absorbed; firm_year_fe saves the estimated firm component.
 eststo AKM: reghdfe lreal_hrl_wage, absorb(firm_year_fe = fnumber_FIC age#educ w_numer year occup3_10 fNUTS2) cluster($clustervar)
 	quietly estadd local fixedyear "X", replace
 	quietly estadd local fixedfirm "X", replace
@@ -44,6 +32,8 @@ eststo AKM: reghdfe lreal_hrl_wage, absorb(firm_year_fe = fnumber_FIC age#educ w
 	quietly estadd local fixedworker "X", replace
 	quietly estadd local fixed3digocc "X", replace
 	
+* Collapse to one row per firm, carrying the firm effect and the covariates
+* the downstream decompositions need.
 gcollapse (mean) nHHI_1dig nHHI_3dig firm_year_fe sizeFirm lfsize logsales sales_per_worker (first) industry, by(fnumber_FIC) fast
 
 gegen std_firm_akm = std(firm_year_fe)

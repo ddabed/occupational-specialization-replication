@@ -1,12 +1,22 @@
 *---------------------------------------------------------------------------------
-* Plots using estimates from local projection models
+* local-projections-plots.do -- Figure 5, Panels A and B
+*
+* Draws the baseline local projection estimates produced by
+* local-projections.do: the response of earnings, hourly wages and hours
+* (Panel A), and of firm switching, occupation switching and switching to
+* non-employment (Panel B), at horizons of one to five years.
+*   in : $path_clean_int/lp_est_exp1.dta
+*   out: $path_out_fig/figure_05_panel_a_lp_earnings.pdf
+*        $path_out_fig/figure_05_panel_b_lp_switching.pdf
 *---------------------------------------------------------------------------------
 
 use $path_clean_int/lp_est_exp1, clear
 
-// Make graphs - only final versions selected, c can be 1 (full sample, reported) or 2 (only years up to 2014)
+// c indexes the sample: 1 is the full sample, which is what the paper reports;
+// 2 restricts to years up to 2014, where the panel is more balanced. Only c = 1
+// is plotted, but the estimates for both are available in lp_est_exp1.dta.
 
-	// relative earning, wages, hours outcomes
+	// Panel A: earnings, hourly wages and hours
 	forval c=1/1 { 
 
 	# delimit
@@ -31,7 +41,7 @@ use $path_clean_int/lp_est_exp1, clear
 	}
 
 	
-	// relative firm and occ and non empl switching outcomes		
+	// Panel B: firm, occupation and non-employment switching
 	forval c=1/1 { 
 	# delimit cr
 		replace k`c'_rfswitch = k - 0.1 
@@ -61,13 +71,15 @@ use $path_clean_int/lp_est_exp1, clear
 }	
 
 
-* For reporting N in figure footnote
+* Observation counts behind each horizon, for the figure note
 table k, stat(mean n1_earn n1_wage n1_hours n1_rfswitch n1_roswitch n1_rneswitch) notot nformat(%12.0f)
 
-/* LaTeX object for figure note: number of observations (full sample, c=1).
-   Commented out by default -- uncomment to (re)write the .tex note after the disclosure check.
+/* Writes the observation-count sentence for the figure notes as a .tex file.
+   Left commented out by default: these counts are output that has to pass
+   statistical disclosure control before it can be released. Uncomment once
+   the counts have been cleared.
 qui {
-	// Panel A figure (lp_rel_earn1exp1): earnings, hourly wages, hours
+	// Panel A: earnings, hourly wages, hours
 	egen _nmin = rowmin(n1_earn n1_wage n1_hours)
 	egen _nmax = rowmax(n1_earn n1_wage n1_hours)
 	summ _nmin, meanonly
@@ -81,7 +93,7 @@ qui {
 	file write fn "Number of observations ranges from `Nlo' to `Nhi' across the one- to five-year horizons." _n
 	file close fn
 
-	// Panel B figure (lp_rel_allswitch1exp1): firm switch, occupation switch, switch to non-employment
+	// Panel B: firm switch, occupation switch, switch to non-employment
 	egen _nmin = rowmin(n1_rfswitch n1_roswitch n1_rneswitch)
 	egen _nmax = rowmax(n1_rfswitch n1_roswitch n1_rneswitch)
 	summ _nmin, meanonly

@@ -1,8 +1,21 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig_singleestab_hr_weighted.do -- Table A6, Panels A, B and C
+*
+* Two robustness checks on Table 4, reported side by side:
+*   cols 1-2  the hours-weighted HHI in place of the headcount-based HHI,
+*             estimated on the full sample
+*   cols 3-4  the headcount HHI, restricted to single-establishment firms,
+*             where firm-level and establishment-level specialization coincide
+* Within each pair the specifications are Table 4 columns 5 and 6.
+*   out: $path_out_tab/table_a06_panel_a_singleestab_hoursweighted_monthly_earnings.tex
+*        $path_out_tab/table_a06_panel_b_singleestab_hoursweighted_monthly_hours.tex
+*        $path_out_tab/table_a06_panel_c_singleestab_hoursweighted_hourly_wage.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
-*sample 5
 
 label var nHHI_3dig "HHI 3-digit"
 
@@ -19,8 +32,8 @@ rename nHHIw_3dig nHHI_3dig
 
 
 // =====================================================================
-// Hours weighted HHI columns: run on the FULL sample (matches main table
-// cols 4-5). The e_ID drop below is only needed to build the
+// Hours-weighted HHI columns: run on the FULL sample, matching Table 4
+// columns 5 and 6. The e_ID drop below is only needed to build the
 // establishment count for the single-establishment columns, so it must
 // not affect these regressions.
 // =====================================================================
@@ -59,8 +72,10 @@ rename nHHI_3dig_unw nHHI_3dig
 
 
 *Nr of establishments
-drop if e_ID < 0 // 1.7% of the sample
-bysort fnumber_FIC e_ID year: gen aux =_n==1 //fnumber just to be sure that establishments aren't allocated to different firms
+drop if e_ID < 0                            // invalid establishment identifiers
+bysort fnumber_FIC e_ID year: gen aux =_n==1 // group on firm as well, so that an
+                                             // establishment id is never shared
+                                             // across firms
 bysort fnumber_FIC year: gegen nrestab_aux = sum(aux)
 bysort fnumber_FIC year: gegen nrestab = max(nrestab_aux)
 	drop nrestab_aux aux
@@ -97,7 +112,7 @@ foreach depvar in lreal_wage lreg_hours_month lreal_hrl_wage {
 
 }
 
-/// Table Label, File Name and Title
+* Each panel is exported as a standalone .tex fragment
 
 local tabtitle "Wage regression: hours weighted HHI at 3 digit occupation and restricted sample"
 local tablabel "table_a06_panel_a_singleestab_hoursweighted_monthly_earnings"

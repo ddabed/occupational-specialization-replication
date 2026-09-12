@@ -1,4 +1,12 @@
- 
+*-------------------------------------------------------------------------
+* hhi_3dig_exposure_bar_plots_occupation.do -- Figure 1, Panel B
+*
+* Mean specialization of the firm a worker is employed at, by 1-digit ISCO
+* occupation, with 95% confidence intervals and the within-occupation standard
+* deviation printed above each bar.
+*   out: $path_out_fig/figure_01_panel_b_exposure_occupation.pdf
+*-------------------------------------------------------------------------
+
 use $path_clean_panel/2010-2019-regression.dta, clear
 
 gen agecat = 1 if age < 34

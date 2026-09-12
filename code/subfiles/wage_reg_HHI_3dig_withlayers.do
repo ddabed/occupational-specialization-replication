@@ -1,4 +1,25 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig_withlayers.do -- Table 6, Panels A, B and C
+*
+* Re-runs the two most demanding specifications of Table 4 (columns 5 and 6)
+* with and without controls for the firm's hierarchical structure, to show
+* that the specialization effect is not just a layers effect.
+*
+* Layers follow Caliendo, Monte and Rossi-Hansberg: each worker is assigned to
+* one of four hierarchical layers from the QdP qualification level, and
+* nrlayers counts how many distinct layers a firm-year contains. The table
+* controls for nrlayers, with one-layer firms as the reference category.
+*
+* This file reads the renamed QdP worker files directly, because the
+* qualification level is not carried into the analysis panel. Those files must
+* therefore still be present at analysis time -- see data/raw/README.md.
+*   out: $path_out_tab/table_06_panel_a_layers_monthly_earnings.tex
+*        $path_out_tab/table_06_panel_b_layers_monthly_hours.tex
+*        $path_out_tab/table_06_panel_c_layers_hourly_wage.tex
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
+
 *Building the layers
 
 foreach y in 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 {
@@ -7,6 +28,7 @@ foreach y in 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 {
 	
 	keep w_n fnumber_FIC year qualif_level occup3_10 school_1
 	
+	* Layer 4 is the top of the hierarchy, layer 1 the bottom.
 	gen layer = 2 if qualif_level == 4 | (qualif_level == 5 & occup3_10 < 400)
 		replace layer = 4 if qualif_level == 1
 		replace layer = 3 if qualif_level == 2 | qualif_level == 3
@@ -14,6 +36,8 @@ foreach y in 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 {
 		
 		label var layer "Layer (Caliendo)"
 		
+	* Alternative occupation-based layer definition, built for comparison but
+	* not used in the table below.
 	gen layer2 = 4 if occup3_10 == 111
 		replace layer2 = 3 if occup3_10 == 112
 		replace layer2 = 1 if occup3_10 >= 400
@@ -49,7 +73,6 @@ use $path_clean_panel/2010-2019-regression.dta, clear
 
 label var nHHI_3dig "HHI 3-digit"
 
-*sample 5
 drop _m
 
 merge 1:1 w_n fnumber_FIC year using $path_temp/layer_10_19
@@ -65,18 +88,18 @@ bysort fnumber_FIC year: gegen nrlayers = sum(aux)
 label def nrlayers_l 1 "One layer" 2 "Two Layers" 3 "Three Layers" 4 "Four Layers"
 label values nrlayers nrlayers_l
 
-//Descriptives layers
-tab layer // 68.1% workers are in layer 1, 11.9% in layer 2, 11.6% in layer 3, 8.4% in layer 4
+// Distribution of workers across layers
+tab layer
 bysort fnumber_FIC year layer: gegen femp_layer = count(w_numer)
 gen empshare_layer = femp_layer / sizeFirm
 
 
 ///// TABLE, 3 PANELS
 
-** PANEL A: Monthly Base Wage as Dependent Variable
+** PANEL A: log real monthly wage
 
 
-*A4. 1.3 + industry fixed effect
+*A4. Table 4 col. 5 specification: 4-digit industry x year FE
 
 ** No layers
 
@@ -104,7 +127,7 @@ eststo HHI_3dig_monthlywage4:reghdfe lreal_wage c.nHHI_3dig i.nrlayers lfsize fe
 	quietly estadd local fixedworker " ", replace
 	 
 
-*A5. 1.4 + worker FE
+*A5. Table 4 col. 6 specification: + worker FE
 
 ** No layers 
 
@@ -134,11 +157,11 @@ eststo HHI_3dig_monthlywage5:reghdfe lreal_wage c.nHHI_3dig i.nrlayers lfsize, n
 	
 	
 	
-** PANEL B: Total monthly hours
+** PANEL B: log total monthly hours
 
 
 
-*B4. 1.3 + industry fixed effect
+*B4. Table 4 col. 5 specification: 4-digit industry x year FE
 
 * No layers
 eststo HHI_3dig_hours_nl_4:reghdfe lreg_hours_month c.nHHI_3dig lfsize female native, noconstant absorb(year#industry fNUTS2 age#educ occup3_10) cluster($clustervar)
@@ -164,7 +187,7 @@ eststo HHI_3dig_hours4:reghdfe lreg_hours_month c.nHHI_3dig i.nrlayers lfsize fe
 	quietly estadd local fixedworker " ", replace
 	 
 
-*B5. 1.4 + worker FE
+*B5. Table 4 col. 6 specification: + worker FE
 
 *No layers
 
@@ -192,10 +215,10 @@ eststo HHI_3dig_hours5:reghdfe lreg_hours_month c.nHHI_3dig i.nrlayers lfsize, n
 	
 	
 
-** PANEL C: real hourly wage
+** PANEL C: log real hourly wage
 
 
-*C4. 1.3 + industry fixed effect
+*C4. Table 4 col. 5 specification: 4-digit industry x year FE
 
 * No layers
 
@@ -222,7 +245,7 @@ eststo HHI_3dig_hourlywage4:reghdfe lreal_hrl_wage c.nHHI_3dig i.nrlayers lfsize
 	quietly estadd local fixedworker " ", replace
 	 
 
-*C5. 1.4 + worker FE
+*C5. Table 4 col. 6 specification: + worker FE
 
 * No layers
 
@@ -256,7 +279,7 @@ label def nrlayers_l3 1 "- One layer" 2 "- Two layers" 3 "- Three layers" 4 "- F
 label values nrlayers nrlayers_l3
 		
 
-/// Table Label, File Name and Title
+* Each panel is exported as a standalone .tex fragment
 
 local tabtitle "Wage regression: HHI at 3 digit occupation."
 local tablabel "table_06_panel_a_layers_monthly_earnings"

@@ -1,3 +1,15 @@
+*-------------------------------------------------------------------------
+* hhi_3dig_exposure_bar_plots_demographics.do -- Figure 1, Panel A
+*
+* Mean specialization of the firm a worker is employed at, by education, age
+* group, sex and nationality, with 95% confidence intervals and the within-
+* group standard deviation printed above each bar.
+*
+* Each group is collapsed separately and given its own x positions, so the
+* four blocks sit side by side on one axis with gaps between them.
+*   out: $path_out_fig/figure_01_panel_a_exposure_demographics.pdf
+*-------------------------------------------------------------------------
+
 use $path_clean_panel/2010-2019-regression.dta, clear
 
 gen agecat = 1 if age < 34

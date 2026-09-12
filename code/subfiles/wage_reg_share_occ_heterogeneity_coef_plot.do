@@ -1,7 +1,16 @@
+*-------------------------------------------------------------------------
+* wage_reg_share_occ_heterogeneity_coef_plot.do -- Figure 3
+*
+* Plots the specialization effect separately for workers in the firm's
+* largest 3-digit occupation and for workers in its other occupations, with
+* and without worker fixed effects. The two marginal effects are recovered
+* from the interacted regression with xlincom.
+*   out: $path_out_fig/figure_03_heterogeneity_occupation_size.pdf
+*        $path_clean_int/pay-transparency-plotprep.dta  (the plotted values)
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
-
-	
 *--------------------------------------------------------------
 * Run each model, store b/lb/ub into row 1 (largest) and row 2 (other)
 *--------------------------------------------------------------

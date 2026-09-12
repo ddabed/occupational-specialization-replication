@@ -1,3 +1,14 @@
+*-------------------------------------------------------------------------
+* ind_composition_stages.do -- Table A1
+*
+* Industry composition of the three samples used in the paper: all firms, the
+* estimation sample, and the value-added sample. The first two are read back
+* from the per-year CSVs that makepanel.R writes at each filtering stage; the
+* third is rebuilt here from the estimation panel.
+*   in : $path_out_log/ind_composition/{presize,final_min10}_<year>.csv
+*   out: $path_out_tab/table_a01_industry_composition.tex
+*-------------------------------------------------------------------------
+
 * Named log, so it coexists with the master log that 3_run_analysis.do opens.
 * Do NOT use a plain `log close' here, that closes the MASTER log and leaves
 * everything after Table A1 unlogged.

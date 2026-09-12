@@ -1,7 +1,22 @@
+*-------------------------------------------------------------------------
+* wage_reg_HHI_3dig_ind_het_plots.do -- Figure 2, Panel B
+*
+* Heterogeneity of the specialization effect across 1-digit (NACE letter)
+* industries. The hourly wage regression is run with the HHI interacted with
+* industry, and each industry's coefficient is plotted against its mean log
+* hourly wage, with markers and the fitted line weighted by hours worked.
+*
+* The industry labels are positioned by hand: the label coordinates live in
+* ind_het_plots_manuallabels.grec, applied through the play() option below.
+*   out: $path_out_fig/figure_02_panel_b_heterogeneity_industry.pdf
+*        $path_clean_int/indhetplots_collapsed.dta  (the plotted coefficients)
+*-------------------------------------------------------------------------
+
 eststo clear   // drop estimates stored by earlier do-files, so esttab cannot pick up a stale one
 
 use $path_clean_panel/2010-2019-regression.dta, clear
 
+* Replace the NACE letter codes with readable industry names
 replace fEAC_1let_rev3 = "Mining and quarrying" if fEAC_1let_rev3 == "B"
 replace fEAC_1let_rev3 = "Manufacturing" if fEAC_1let_rev3 == "C"
 replace fEAC_1let_rev3 = "Electricity, gas, steam and air cond. supply" if fEAC_1let_rev3 == "D"
@@ -28,11 +43,7 @@ encode fEAC_1let_rev3, gen(ind_1dig)
 label var ind_1dig "1-let. industry"
 	
 	
-///// Regressions
-
-
-*C. Hourly wage
-
+* Hourly wage regression, HHI interacted with 1-digit industry
 eststo HHI_1dig_hourlywage: reghdfe lreal_hrl_wage c.nHHI_3dig#i.ind_1dig lfsize, noconstant absorb(year#industry fNUTS2 age#educ occup3_10 w_numer) cluster($clustervar)
 
 matrix b = e(b)
@@ -92,7 +103,8 @@ rename interaction_b ind1xhhi_hrlwage
 
 compress
 
-// Save collapsed panel to work locally later	
+// Keep the collapsed coefficients, so the figure can be redrawn without
+// re-estimating the regression.
 save $path_clean_int/indhetplots_collapsed, replace
 
 
