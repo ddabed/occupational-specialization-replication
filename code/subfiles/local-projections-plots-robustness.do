@@ -73,26 +73,3 @@ use $path_clean_int/lp_est_exp1_akm, clear
 
 * Observation counts behind each horizon, for the figure note
 table k, stat(mean n1_earn_akm n1_wage_akm n1_hours_akm) notot nformat(%12.0f)
-
-
-
-/* Writes the observation-count sentence for the Panel B figure note as a .tex
-   file. Left commented out by default: these counts are output that has to
-   pass statistical disclosure control before it can be released. Uncomment
-   once the counts have been cleared.
-qui {
-	// Panel B: earnings, hourly wages, hours
-	egen _nmin = rowmin(n1_earn_akm n1_wage_akm n1_hours_akm)
-	egen _nmax = rowmax(n1_earn_akm n1_wage_akm n1_hours_akm)
-	summ _nmin, meanonly
-	local Nlo : di %15.0fc r(min)
-	local Nlo = trim("`Nlo'")
-	summ _nmax, meanonly
-	local Nhi : di %15.0fc r(max)
-	local Nhi = trim("`Nhi'")
-	drop _nmin _nmax
-	file open fn using "$path_out_tab/figure_a02_panel_b_lp_akm_controlled_note.tex", write replace
-	file write fn "Number of observations ranges from `Nlo' to `Nhi' across the one- to five-year horizons." _n
-	file close fn
-}
-*/

@@ -46,6 +46,10 @@ data/
 | `Rscript` | reachable from Stata's `shell` (see setup step 3) |
 | Stata packages | installed by `code/0_install_packages.do` |
 
+**Runtime.** `2_build_data.do` takes about two hours. `3_run_analysis.do` takes
+several days, mainly to estimate the AKM model (worker and firm fixed effects on
+the full panel) and the local projections.
+
 ## Setup
 
 1. Run `code/0_install_packages.do` once. It installs `reghdfe`, `ftools`,
@@ -64,15 +68,9 @@ data/
    starting anything.
 
 All other directories (`data/clean/`, `data/out/fig/`, `data/out/tab/`,
-`data/out/log/`, `data/tmp/`) are created automatically. 
+`data/out/log/`, `data/tmp/`) are created automatically.
 
 ## Running
-
-Timing note: `2_build_data.do` takes a couple of hours. **`3_run_analysis.do`
-is the long one — measured in days**, because it re-estimates the AKM model
-(worker and firm fixed effects on the full panel) and the local projections.
-Run `0_check_setup.do` first, and plan the analysis stage as an unattended run.
-
 
 Run the Stata files from the `code/` folder (they `include "_paths.do"` by
 relative path and will stop with an explanatory error otherwise):
@@ -114,19 +112,9 @@ do 2_build_data.do
 Step 2 receives `$projectfolder` as a command-line argument, so the path is never
 set in two places. After R finishes, `2_build_data.do` confirms the three panel
 datasets exist before continuing — if R failed, it stops with the reason and
-prints the exact command to run the R step by hand.
-
-**Restarting after a failure.** The three switches at the top of
-`2_build_data.do` are all `1`. Set one to `0` to *skip* work already done — for
-example, after fixing an R problem and running `makepanel.R` yourself, set
-`global do_step2_panel 0`. Leaving all three at `1` always produces a complete
-build, so forgetting to change them cannot silently give you a partial result.
-
-If you would rather drive R yourself, set `global do_step2_panel 0` and run:
-
-```sh
-Rscript code/subfiles/makepanel.R "/path/to/replication-package"
-```
+prints the exact command to run the R step by hand. If the build stops partway,
+set the switch of each completed step to `0` at the top of `2_build_data.do`
+and run it again.
 
 Datasets produced, all used in step 3:
 
@@ -142,21 +130,21 @@ Datasets produced, all used in step 3:
 do 3_run_analysis.do
 ```
 
-All switches in the file are set to `1`, so one run reproduces the whole package.
-Tables are saved in `data/out/tab/` as `.tex` fragments; figures are saved in
-`data/out/fig/` as `.pdf`.
+Running it reproduces every table and figure. Tables are saved in
+`data/out/tab/` as `.tex` fragments; figures are saved in `data/out/fig/` as
+`.pdf`.
 
 The file runs in two sections:
 
-- **Section 1** builds shared intermediates that produce no output of their own:
-  `AKM_firm_HHI.do` → `AKM_full.dta`, then `local-projections.do` →
-  `lp_est_exp1.dta` and `lp_est_exp1_akm.dta`. Section 1 rebuilds an intermediate
-  whenever any switch that consumes it is on, so **any subset of output switches
-  runs correctly** without manual ordering.
+- **Section 1** estimates the AKM model (`AKM_firm_HHI.do` → `AKM_full.dta`)
+  and then the local projections (`local-projections.do` → `lp_est_exp1.dta`
+  and `lp_est_exp1_akm.dta`). These datasets produce no output of their own;
+  Figures 4, 5, A1 and A2 read them.
 - **Section 2** produces the tables and figures in paper order.
 
-Dependency to be aware of if you edit the switches: `local-projections.do` reads
-`AKM_full.dta`, so the AKM step must run before the local-projection step.
+Each table and figure has a switch at the top of the file. To reproduce only
+some of them, set the other switches to `0`. Section 1 still runs whenever a
+figure that needs its datasets is switched on.
 
 ## Output map
 
@@ -212,15 +200,6 @@ Every output file states its paper float. 45 files, 23 floats.
 
 ## Notes on the code
 
-- **Two figure notes are not written by default.** `local-projections-plots.do`
-  contains commented-out blocks that write `*_note.tex` files reporting the range
-  of observation counts across horizons for the Figure 5 panels; the same exists
-  for Figure A2 Panel B in `local-projections-plots-robustness.do`. These are left
-  commented because the counts require statistical-disclosure clearance before
-  release. Uncomment them if you have cleared output.
-- **`scores_isco4dig.dta` is committed, not generated on demand.** It is used by
-  `2_build_data.do` (Step 3) and by Table 5. `1_build_task_scores.do` rebuilds it
-  from the O*NET release if you want to verify it.
 - **`ind_het_plots_manuallabels.grec`** holds the manual label positions for
   Figure 2, Panel B and is applied by `wage_reg_HHI_3dig_ind_het_plots.do`.
 - Standard errors are clustered on `clustervar`, set once in `_paths.do` (firm id).

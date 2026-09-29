@@ -5,7 +5,7 @@
 *        sheet "2010 SOC to ISCO-08", header on row 7, columns A:F)
 *        $path_clean_onet/onet16_tasks_soc.dta
 *   out: $path_raw/isco_soc10_crosswalk.dta
-*        $path_raw/scores_isco4dig.dta   (439 ISCO-08 4-digit codes x 4 scores)
+*        $path_raw/scores_isco4dig.dta   (439 rows x 4 scores; see data/raw/README.md)
 //////////////////////////////////////
 // Step 1: parse the SOC-2010 / ISCO-08 crosswalk
 //////////////////////////////////////
@@ -85,7 +85,9 @@ replace occup4_10 =  "3322" if occup4_10 ==  "3322 "
 replace occup4_10 =  "5169" if occup4_10 ==  "5169 "
 replace occup4_10 =  "7422" if occup4_10 ==  "7422 "
 
-* Average the scores over all SOC-2010 occupations mapping to the same ISCO-08 code
+* Average the scores over all SOC-2010 occupations mapping to the same ISCO-08 code.
+* SOC codes with no ISCO-08 code in the crosswalk form one row with an empty
+* occup4_10, which is not an occupation (see data/raw/README.md).
 collapse (mean) socskills_onet16 routine_onet16 cognitive_onet16 manual_onet16, by(occup4_10)	
 
 save $path_raw/scores_isco4dig, replace

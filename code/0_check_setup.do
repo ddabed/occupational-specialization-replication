@@ -106,64 +106,20 @@ display _n "[5] Input data -- confidential, supplied by you (see data/raw/README
 * SCIE is needed by step 3 
 _ckdir "$path_raw_SCIE" "SCIE folder (needed by step 3)"
 
-*-- QdP comes in two forms and the requirement depends on which you have:
-*     data/raw/QdP/           original SPSS files. Read ONLY by step 1.
-*     data/raw/QdP-renamed/   written by step 1. Read by step 2 (makepanel.R)
-*                             AND at analysis time by Table 6
-*                             (wage_reg_HHI_3dig_withlayers.do).
-*   So if QdP-renamed is already complete, step 1 can be skipped entirely.
-local nren 0
-forvalues y = 2010/2019 {
-	capture confirm file "$path_raw_QdPren/workers_renamed_occlabel`y'.dta"
-	local rc_w = _rc
-	capture confirm file "$path_raw_QdPren/firms_renamed`y'.dta"
-	if `rc_w' == 0 & _rc == 0 local nren = `nren' + 1
-}
-
+* QdP: the original SPSS files, read by step 1 of 2_build_data.do
+_ckdir "$path_raw_QdP" "QdP folder (needed by step 1)"
 mata: st_local("qdp_raw", strofreal(direxists(st_global("path_raw_QdP"))))
-
-if `nren' == 10 {
-	display "    ok    QdP-renamed/ complete: all 10 years present"
-	display "          -> step 1 is already done. You may set {bf:global do_step1_rename 0}"
-	display "             in 2_build_data.do to skip re-importing the SPSS files."
-}
-else if `nren' > 0 {
-	display as result "    WARN  QdP-renamed/ is partial: `nren' of 10 years present."
-	display as result "          Step 1 must run to complete it (leave do_step1_rename 1)."
-	global chk_nwarn = ${chk_nwarn} + 1
-}
-else display "    ..    QdP-renamed/ empty -- step 1 will create it"
-
-if `nren' < 10 {
-	* Step 1 has to run, so the original SPSS files are required.
-	if `qdp_raw' == 0 {
-		display as error "    FAIL  QdP-renamed/ is incomplete AND data/raw/QdP/ is missing."
-		display as error "          One of the two is required: either the original SPSS files"
-		display as error "          in data/raw/QdP/, or a complete data/raw/QdP-renamed/."
-		global chk_nfail = ${chk_nfail} + 1
+if `qdp_raw' == 1 {
+	* Spot-check one raw file, to catch a wrong folder or renamed copies.
+	capture confirm file "$path_raw_QdP/QP_Trabalhadores_2010_Fins_Cientificos_21-05-2018.sav"
+	if _rc {
+		display as result "    WARN  the 2010 raw QdP worker file was not found under"
+		display as result "          $path_raw_QdP"
+		display as result "          If your copies are named differently, reconcile them with"
+		display as result "          the import spss lines in build_1_rename_raw_files.do."
+		global chk_nwarn = ${chk_nwarn} + 1
 	}
-	else {
-		display "    ok    QdP folder (needed by step 1)"
-		* Spot-check one raw file, to catch a wrong folder or renamed copies.
-		capture confirm file "$path_raw_QdP/QP_Trabalhadores_2010_Fins_Cientificos_21-05-2018.sav"
-		if _rc {
-			display as result "    WARN  the 2010 raw QdP worker file was not found under"
-			display as result "          $path_raw_QdP"
-			display as result "          If your copies are named differently, reconcile them with"
-			display as result "          the import spss lines in build_1_rename_raw_files.do."
-			global chk_nwarn = ${chk_nwarn} + 1
-		}
-		else display "    ok    2010 raw QdP worker file present"
-	}
-}
-else if `qdp_raw' == 0 {
-	display "    ..    data/raw/QdP/ absent, but not needed since step 1 is done"
-}
-
-* Table 6 reads QdP-renamed directly, so flag it even if you skip the build.
-if `nren' < 10 {
-	display as result "    note  Table 6 reads QdP-renamed/workers_renamed_occlabel*.dta"
-	display as result "          directly, so those files must exist before 3_run_analysis.do."
+	else display "    ok    2010 raw QdP worker file present"
 }
 
 *-------------------------------------------------------------------------
@@ -176,8 +132,9 @@ _ckfile "$path_do_sub/build_3_label_and_merge.do"     "subfiles/build_3_label_an
 
 *-------------------------------------------------------------------------
 * 7. R
-*    Stata cannot read a shell exit code portably, so this prints R's own
-*    output for you to read rather than trying to judge it.
+*    Stata cannot tell whether R ran correctly, so this block does not count
+*    toward the summary below. Read R's output yourself: its version and any
+*    missing packages.
 *-------------------------------------------------------------------------
 display _n "[7] R -- output below comes straight from R"
 display     "    If NOTHING appears, Rscript could not be launched: set"

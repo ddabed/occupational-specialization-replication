@@ -8,7 +8,7 @@ from the data providers before running the code.
 
 | File | Description |
 |---|---|
-| `scores_isco4dig.dta` | O*Net task composites (social skills, routine, cognitive, manual) averaged onto ISCO-08 4-digit codes: 439 occupations × 4 scores. Built by `code/1_build_task_scores.do`. |
+| `scores_isco4dig.dta` | O*Net task composites (social skills, routine, cognitive, manual) averaged onto ISCO-08 4-digit codes: 439 rows × 4 scores (see [Note on coverage](#note-on-coverage)). Built by `code/1_build_task_scores.do`. |
 | `isco08_soc10_crosswalk.xls` | BLS crosswalk between 2010 SOC and ISCO-08. |
 | `INE/PriceIndex.xls` | Portuguese consumer price index (IPC, base 2012), published INE statistics. Read by `makepanel.R` to deflate nominal values. |
 | `INE/priceindex.dta` | The same CPI series in Stata format, read by the labelling step. Both formats are kept because the R and Stata portions of the data building process each read their own. |
@@ -26,28 +26,10 @@ available by Statistics Portugal (INE) under a data-use agreement. Both require
 an approved research project and a signed confidentiality agreement; neither
 dataset may be redistributed by the authors.
 
-### `QdP/` versus `QdP-renamed/`
-
-These are two different things and the code uses both:
-
-| Folder | Contents | Read by |
-|---|---|---|
-| `QdP/` | the original SPSS files as delivered | step 1 of `2_build_data.do`, and nothing else |
-| `QdP-renamed/` | Stata versions with English variable names, **written by step 1** | step 2 (`makepanel.R`), **and Table 6** (`wage_reg_HHI_3dig_withlayers.do`) |
-
-Two consequences:
-
-- `QdP-renamed/` is not a scratch folder. Table 6 reads
-  `workers_renamed_occlabel{year}.dta` directly at analysis time, so these files
-  must still be present when you run `3_run_analysis.do` — not just during the
-  build.
-- If you already hold a complete `QdP-renamed/` (all ten years of both
-  `workers_renamed_occlabel*` and `firms_renamed*`), you do **not** need
-  `QdP/` at all: set `global do_step1_rename 0` in `2_build_data.do` and the
-  original SPSS files are never touched. `0_check_setup.do` detects this and
-  tells you.
-
-Both folders hold confidential microdata and neither may be redistributed.
+Step 1 of `2_build_data.do` writes Stata copies of the QdP files, with English
+variable names, to `QdP-renamed/`. Keep this folder after the build: Table 6
+(`wage_reg_HHI_3dig_withlayers.do`) reads it directly. It also holds
+confidential microdata and may not be redistributed.
 
 ## Must be downloaded separately — public
 
@@ -80,3 +62,8 @@ Three ISCO-08 codes in `scores_isco4dig.dta` (`0110`, `0210`, `0310` — armed
 forces) have missing scores, because O*NET does not cover military occupations.
 This is inherent to the SOC–ISCO crosswalk and is why a small number of
 occupations do not merge downstream.
+
+The file also has one row with an empty ISCO-08 code. It holds the average
+scores of the SOC occupations that have no ISCO-08 code in the crosswalk, and
+it does not correspond to any occupation. The panel build drops records
+without an occupation code (`makepanel.R`) before these scores are merged.
