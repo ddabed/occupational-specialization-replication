@@ -8,10 +8,10 @@ from the data providers before running the code.
 
 | File | Description |
 |---|---|
-| `scores_isco4dig.dta` | O*Net task composites (social skills, routine, cognitive, manual) averaged onto ISCO-08 4-digit codes: 439 occupations × 4 scores. Built by `code/1_build_task_scores.do`; shipped so you do not have to. |
-| `isco08_soc10_crosswalk.xls` | BLS crosswalk between 2010 SOC and ISCO-08. US Government work, public domain. |
+| `scores_isco4dig.dta` | O*Net task composites (social skills, routine, cognitive, manual) averaged onto ISCO-08 4-digit codes: 439 occupations × 4 scores. Built by `code/1_build_task_scores.do`. |
+| `isco08_soc10_crosswalk.xls` | BLS crosswalk between 2010 SOC and ISCO-08. |
 | `INE/PriceIndex.xls` | Portuguese consumer price index (IPC, base 2012), published INE statistics. Read by `makepanel.R` to deflate nominal values. |
-| `INE/priceindex.dta` | The same CPI series in Stata format, read by the labelling step. Both formats are kept because the R and Stata halves of the build each read their own. |
+| `INE/priceindex.dta` | The same CPI series in Stata format, read by the labelling step. Both formats are kept because the R and Stata portions of the data building process each read their own. |
 
 ## Must be obtained separately — confidential
 
@@ -19,9 +19,6 @@ from the data providers before running the code.
 |---|---|---|
 | `QdP/` | Portuguese Ministry of Labour (GEP/MTSSS) | *Quadros de Pessoal* matched employer–employee data, 2010–2019: worker and firm files, one per year |
 | `SCIE/` | Statistics Portugal (INE) | *Sistema de Contas Integradas das Empresas*: firm balance-sheet data (value added at market prices, labour costs, intermediate inputs, capital stock) |
-
-No further INE files are needed: the only INE inputs the code reads are the two
-price-index files above, and both ship with the package.
 
 *Quadros de Pessoal* is made available to researchers by the Portuguese Ministry
 of Labour (Gabinete de Estratégia e Planeamento, GEP/MTSSS). SCIE is made

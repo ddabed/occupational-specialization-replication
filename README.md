@@ -21,9 +21,9 @@ The underlying microdata are confidential and are **not** included. See
 code/
 ├── _paths.do                  set `projectfolder' here -- the only path you must edit
 ├── 0_install_packages.do      run once
-├── 0_check_setup.do           pre-flight check; writes nothing
+├── 0_check_setup.do           checks setup; writes nothing
 ├── 1_build_task_scores.do     O*Net -> data/raw/scores_isco4dig.dta   (optional)
-├── 2_build_data.do            raw microdata -> analysis panels (runs R for you)
+├── 2_build_data.do            raw microdata -> analysis panels (run in R)
 ├── 3_run_analysis.do          panels -> every table and figure
 └── subfiles/
     ├── onet/                  the 6 do-files behind 1_build_task_scores.do
@@ -60,13 +60,11 @@ data/
    [`data/raw/README.md`](data/raw/README.md).
 5. **Run [`code/0_check_setup.do`](code/0_check_setup.do).** It takes seconds,
    writes nothing, and verifies packages, schemes, `projectfolder`, the input
-   data and R. The analysis stage runs for days, so confirm this passes before
+   data and R. The analysis stage takes some time to run, so confirm this passes before
    starting anything.
 
 All other directories (`data/clean/`, `data/out/fig/`, `data/out/tab/`,
-`data/out/log/`, `data/tmp/`) are created automatically. Stata's `save`,
-`graph export` and `esttab` do not create directories, so `_paths.do` makes them
-all up front — a missing folder would otherwise mean output is silently skipped.
+`data/out/log/`, `data/tmp/`) are created automatically. 
 
 ## Running
 
@@ -92,8 +90,8 @@ do 1_build_task_scores.do
 Rebuilds `data/raw/scores_isco4dig.dta` — the O*Net task composites mapped onto
 ISCO-08 4-digit codes, which feed the task-concentration measure in Table 5.
 
-**This step is optional.** The built file ships with the package, so you only
-need to run it to reproduce the lookup from source. It is the one stage that runs
+**This step is optional.** The built file is included with the package, so you only
+need to run it to reproduce it from the source files. It is the one stage that runs
 entirely on public data: it needs the O*NET 21.0 (2016) text release, which is a
 free download (see [`data/raw/README.md`](data/raw/README.md)) and is not
 included here. Everything downstream requires the confidential microdata.
@@ -130,7 +128,7 @@ If you would rather drive R yourself, set `global do_step2_panel 0` and run:
 Rscript code/subfiles/makepanel.R "/path/to/replication-package"
 ```
 
-Datasets produced, all consumed by step 3:
+Datasets produced, all used in step 3:
 
 - `data/clean/panel/2010-2019-regression.dta` — min firm size 10, **main sample**
 - `data/clean/panel/2010-2019-regression-5ormore.dta` — min firm size 5
@@ -145,7 +143,7 @@ do 3_run_analysis.do
 ```
 
 All switches in the file are set to `1`, so one run reproduces the whole package.
-Tables land in `data/out/tab/` as `.tex` fragments; figures land in
+Tables are saved in `data/out/tab/` as `.tex` fragments; figures are saved in
 `data/out/fig/` as `.pdf`.
 
 The file runs in two sections:

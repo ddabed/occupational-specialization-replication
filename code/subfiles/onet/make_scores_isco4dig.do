@@ -1,5 +1,5 @@
 * Maps the SOC-level O*Net task composites onto ISCO-08 4-digit codes,
-* producing the task-score lookup used by 2_build_data.do and Table 5.
+* producing the task-score dataset used by 2_build_data.do and Table 5.
 * Called by 1_build_task_scores.do.
 *   in : $path_raw/isco08_soc10_crosswalk.xls  (BLS 2010 SOC <-> ISCO-08;
 *        sheet "2010 SOC to ISCO-08", header on row 7, columns A:F)

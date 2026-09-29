@@ -1,15 +1,10 @@
 clear all
 
 *=========================================================================
-* 0_check_setup.do -- pre-flight check. Run this FIRST.
+* 0_check_setup.do -- setup checks. Run this FIRST.
 *
 * Verifies that everything the package needs is in place: Stata packages,
-* graph schemes, the projectfolder setting, the input data, and R. It takes
-* seconds and WRITES NOTHING, so it is safe to run at any time.
-*
-* Worth doing first because 3_run_analysis.do runs for DAYS (it re-estimates
-* the AKM model and the local projections). 2_build_data.do is comparatively
-* quick -- a couple of hours.
+* graph schemes, the projectfolder setting, the input data, and R. 
 *=========================================================================
 
 global chk_nfail 0
@@ -108,7 +103,7 @@ _ckfile "$path_raw_INE/PriceIndex.xls"         "INE/PriceIndex.xls"
 
 display _n "[5] Input data -- confidential, supplied by you (see data/raw/README.md)"
 
-* SCIE is needed by step 3 and has no substitute.
+* SCIE is needed by step 3 
 _ckdir "$path_raw_SCIE" "SCIE folder (needed by step 3)"
 
 *-- QdP comes in two forms and the requirement depends on which you have:

@@ -9,19 +9,19 @@ clear all
 * the task-concentration measure in Table 5.
 *
 * This is the only stage of the package that runs entirely on public data.
-* scores_isco4dig.dta is shipped with the package, so you only need to run
-* this file if you want to rebuild the lookup from source.
+* scores_isco4dig.dta is included with the package, so you only need to run
+* this file if you want to rebuild the file from the raw data.
 *
 * INPUTS (see data/raw/README.md for how to obtain them)
 *   data/raw/onet/{Abilities,Knowledge,Skills,Work Context}.txt
 *       O*NET 21.0 (2016), from https://www.onetcenter.org/db_releases.html
 *   data/raw/isco08_soc10_crosswalk.xls
-*       BLS 2010 SOC <-> ISCO-08 crosswalk (shipped; public domain)
+*       BLS 2010 SOC <-> ISCO-08 crosswalk (included in package; public domain)
 *
 * OUTPUTS
 *   data/clean/onet/onet16_*.dta        intermediates
 *   data/raw/isco_soc10_crosswalk.dta  parsed crosswalk
-*   data/raw/scores_isco4dig.dta       the lookup consumed downstream
+*   data/raw/scores_isco4dig.dta       the file used downstream
 *=========================================================================
 
 * Locate the shared configuration. Run this file from the package's code/ folder.
@@ -38,7 +38,7 @@ log using $path_out_log/1_build_task_scores, replace
 
 *-------------------------------------------------------------------------
 * Is the O*NET download present?
-* Checked file by file rather than in a foreach loop, because one of the
+* Checking file by file rather than in a foreach loop, because one of the
 * names contains a space ("Work Context.txt").
 *-------------------------------------------------------------------------
 global onet_ok 1
@@ -62,9 +62,10 @@ capture program drop _onetck
 
 if ${onet_ok} == 0 {
 
-	* The lookup SHIPS with the package, so a missing O*NET download is only a
-	* problem if you actually meant to rebuild it. If the output is already
-	* there, say so and stop cleanly rather than raising an error.
+	* The file constructed here is included with the package, so a missing 
+	* O*NET download is only a problem if you actually meant to rebuild it. 
+	* If the output is already there, say so and stop cleanly rather than 
+	* raising an error.
 	capture confirm file "$path_raw/scores_isco4dig.dta"
 	if _rc == 0 {
 		display _n "{hline 70}"

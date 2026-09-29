@@ -40,7 +40,7 @@ foreach var of varlist skill* wkcontext* abil* knowl* {
 	replace `var'=`var'*10
 }
 
-* Build the four composites, following Deming (2017)
+* Build the four composites, following Deming (2017), Cortes et al. (2023)
 	
 foreach num in 16 {
 * Social skills

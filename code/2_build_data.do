@@ -18,7 +18,7 @@ clear all
 *   data/clean/intermediate/va_tfp_data/tfp_va_data.dta  (tfp_cd_wb, lva, valueadded_mp)
 *   data/raw/QdP-renamed/workers_renamed_occlabel{2010..2019}.dta
 *
-* Requires data/raw/scores_isco4dig.dta (Step 3). It ships with the package;
+* Requires data/raw/scores_isco4dig.dta (Step 3). It is included with the package;
 * 1_build_task_scores.do rebuilds it from the O*NET release.
 *=========================================================================
 

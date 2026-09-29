@@ -89,8 +89,6 @@ cap mkdir "$path_temp"
 set more off
 version 17.0
 * The figures require the cleanplots scheme (and Figure 1 uses plotplain).
-* Check it up front: without this, the run dies on a cryptic scheme error, or
-* worse, silently draws the figures in the wrong scheme.
 capture findfile scheme-cleanplots.scheme
 if _rc {
 	display as error "The {bf:cleanplots} graph scheme is not installed."

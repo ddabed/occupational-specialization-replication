@@ -58,7 +58,7 @@ tempfile akmprod
 save `akmprod', replace
 
 *-------------------------------------------------------------------------
-* Loop over the three productivity measures
+* Loop over the two productivity measures
 *-------------------------------------------------------------------------
 foreach m in  tfp va {
 

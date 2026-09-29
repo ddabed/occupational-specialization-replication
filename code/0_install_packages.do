@@ -16,10 +16,6 @@ ssc install colrspace, replace   // required by palettes
 ssc install blindschemes, replace
 ssc install prodest,   replace   // TFP estimation (Wooldridge/ACF/LP/OP)
 
-* Graph scheme used by every figure. Not on SSC, so it comes from the scheme
-* author's own site. Failures are caught and reported rather than left silent:
-* an unnoticed failure here surfaces much later as a cryptic scheme error, or
-* worse, as figures drawn in the wrong scheme.
 capture findfile scheme-cleanplots.scheme
 if _rc {
 	display _n "Installing the cleanplots scheme..."
@@ -51,7 +47,6 @@ if _rc {
 else display _n "cleanplots scheme already installed."
 
 * gtools ships precompiled plugins; refresh them for the local platform.
-* Optional, so failure here is not fatal.
 cap gtools, upgrade
 
 *-------------------------------------------------------------------------
